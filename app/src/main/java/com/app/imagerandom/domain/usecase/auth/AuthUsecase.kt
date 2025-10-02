@@ -1,6 +1,6 @@
 package com.app.imagerandom.domain.usecase.auth
 
-import com.app.imagerandom.data.repository.AuthRepository
+import com.app.imagerandom.data.repository.auth.AuthRepository
 import javax.inject.Inject
 
 class AuthUseCase @Inject constructor(

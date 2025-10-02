@@ -1,4 +1,4 @@
-package com.app.imagerandom.data.repository
+package com.app.imagerandom.data.repository.auth
 
 import com.app.imagerandom.domain.model.CreateSessionResponse
 import com.app.imagerandom.domain.model.RequestTokenResponse

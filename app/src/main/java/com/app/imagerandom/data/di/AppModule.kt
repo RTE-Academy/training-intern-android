@@ -3,8 +3,10 @@ package com.app.imagerandom.data.di
 import android.content.Context
 import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.data.network.MovieApiService
-import com.app.imagerandom.data.repository.AuthRepository
-import com.app.imagerandom.data.repository.AuthRepositoryImpl
+import com.app.imagerandom.data.repository.auth.AuthRepository
+import com.app.imagerandom.data.repository.auth.AuthRepositoryImpl
+import com.app.imagerandom.data.repository.movies.MoviesRepository
+import com.app.imagerandom.data.repository.movies.MoviesRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,15 +20,21 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
+    fun provideSharedPrefHelper(
+        @ApplicationContext context: Context
+    ): SharedPrefHelper {
+        return SharedPrefHelper(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(api: MovieApiService): AuthRepository {
         return AuthRepositoryImpl(api)
     }
 
     @Provides
     @Singleton
-    fun provideSharedPrefHelper(
-        @ApplicationContext context: Context
-    ): SharedPrefHelper {
-        return SharedPrefHelper(context)
+    fun provideHomeRepository(api: MovieApiService): MoviesRepository {
+        return MoviesRepositoryImpl(api)
     }
 }
