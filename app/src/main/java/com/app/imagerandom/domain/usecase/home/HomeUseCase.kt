@@ -7,8 +7,5 @@ import javax.inject.Inject
 class HomeUseCase @Inject constructor(
     private val repo: MoviesRepository
 ) {
-    suspend fun getMovieList(language: String, page: Int): GetMovieListResponse {
-        val sessionResult = repo.getMovieList(language, page)
-        return sessionResult
-    }
+    suspend fun getMovieList(language: String, page: Int): GetMovieListResponse = repo.getMovieList(language, page)
 }
