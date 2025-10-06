@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,13 +28,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import com.app.imagerandom.R
-import com.app.imagerandom.domain.model.GetMovieListResponse
+import com.app.imagerandom.common.NetworkConstants
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
@@ -52,14 +52,14 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
         route = Screen.HOME,
     ) {
         val viewModel = hiltViewModel<HomeViewModel>()
-        val pageAndMovieList by viewModel.pageAndListMovie.collectAsState()
-        val recentMovieList = viewModel.movies
+        val recentMovieList by viewModel::movies
+        val isLoading by viewModel::isLoading
         HomeScreen(
             navController = navController,
             isAutoSignIn = viewModel.checkAutoSignIn(),
-            pageAndMovieList = pageAndMovieList,
+            isLoading = isLoading,
             recentMovieList = recentMovieList,
-            loadMoreMovies = { viewModel.loadMoreMovies() }
+            loadMoreMovies = viewModel::loadMovies
         )
     }
 }
@@ -68,9 +68,9 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
 fun HomeScreen(
     navController: NavController,
     isAutoSignIn: Boolean,
-    pageAndMovieList: GetMovieListResponse? = null,
-    recentMovieList: SnapshotStateList<MovieItem>,
-    loadMoreMovies: () -> Unit
+    isLoading: Boolean,
+    recentMovieList: List<MovieItem>,
+    loadMoreMovies: () -> Unit,
 ) {
     var isVisible by remember { mutableStateOf(false) }
     val gridState = rememberLazyGridState()
@@ -110,11 +110,10 @@ fun HomeScreen(
             exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut()
         ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.fillMaxSize()
             ) {
                 Text(
-                    text = "Khám Phá Phim Hot Nhất 🔥",
+                    text = "Khám Phá Phim Hot Nhất",
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 28.sp,
@@ -127,36 +126,40 @@ fun HomeScreen(
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .height(180.dp)
                 ) {
-                    Box(
+                    ConstraintLayout(
                         modifier = Modifier
                             .weight(1f)
-                            .fillMaxHeight()
                     ) {
-                        Column(Modifier.align(Alignment.BottomEnd)) {
-                            Image(
-                                painter = painterResource(id = R.drawable.img_background_categories_left),
-                                contentDescription = "Image 1",
-                                modifier = Modifier
-                                    .fillMaxWidth(0.9f),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-
+                        // Create references for the composables to constrain
+                        val (background, image, text) = createRefs()
+                        Image(
+                            painter = painterResource(id = R.drawable.img_background_categories_left),
+                            contentDescription = "Background Image",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .constrainAs(background) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                },
+                            contentScale = ContentScale.FillWidth
+                        )
                         Image(
                             painter = painterResource(id = R.drawable.img_categories_spiderman),
-                            contentDescription = "Image 2",
+                            contentDescription = "Spiderman Image",
                             modifier = Modifier
-                                .fillMaxSize(0.8f)
-                                .align(Alignment.BottomStart),
-                            contentScale = ContentScale.Crop
+                                .constrainAs(image) {
+                                    start.linkTo(background.start)
+                                    end.linkTo(text.start)
+                                },
                         )
-
                         Text(
                             modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .padding(end = 10.dp, bottom = 20.dp),
+                                .padding(top = 20.dp, end = 8.dp)
+                                .constrainAs(text) {
+                                    top.linkTo(background.top)
+                                    end.linkTo(background.end)
+                                },
                             text = "Movies",
                             color = AppColors.TextPrimary,
                             fontWeight = FontWeight.Bold,
@@ -166,34 +169,44 @@ fun HomeScreen(
 
                     Spacer(Modifier.width(10.dp))
 
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
+                    ConstraintLayout(
+                        modifier = Modifier.weight(1f)
                     ) {
+                        val (background, image, text) = createRefs()
+
                         Image(
                             painter = painterResource(id = R.drawable.img_background_categories_right),
-                            contentDescription = "Image 1",
+                            contentDescription = "Background Image",
                             modifier = Modifier
-                                .fillMaxWidth(0.9f)
-                                .align(Alignment.BottomStart),
-                            contentScale = ContentScale.Crop
+                                .fillMaxWidth()
+                                .constrainAs(background) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                },
+                            contentScale = ContentScale.FillWidth
                         )
 
                         Image(
                             painter = painterResource(id = R.drawable.img_categories_deku),
-                            contentDescription = "Image 2",
+                            contentDescription = "Deku Image",
                             modifier = Modifier
-                                .fillMaxWidth(0.7f)
-                                .align(Alignment.BottomEnd),
-                            contentScale = ContentScale.Crop
+                                .aspectRatio(604f / 644f)
+                                .offset(x = 30.dp)
+                                .constrainAs(image) {
+                                    end.linkTo(parent.end)
+                                    bottom.linkTo(parent.bottom)
+                                },
+                            contentScale = ContentScale.Fit
                         )
 
                         Text(
                             modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 10.dp, bottom = 20.dp),
-                            text = "Animes",
+                                .padding(top = 20.dp, start = 8.dp)
+                                .constrainAs(text) {
+                                    top.linkTo(background.top)
+                                    start.linkTo(parent.start)
+                                },
+                            text = "Toons",
                             color = AppColors.TextPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
@@ -210,7 +223,23 @@ fun HomeScreen(
                     )
                 )
 
-                if (pageAndMovieList != null && pageAndMovieList.results.isNotEmpty()) {
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                    ) {
+                        LinearProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp),
+                            color = AppColors.TextPrimary,
+                            trackColor = AppColors.Error
+                        )
+                    }
+                }
+
+                if (recentMovieList.isNotEmpty()) {
                     // List movies
                     LazyVerticalGrid(
                         state = gridState,
@@ -241,7 +270,7 @@ fun HomeScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     AsyncImage(
-                                        model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                                        model = NetworkConstants.IMAGE_BASE_URL + movie.posterPath,
                                         contentDescription = movie.title,
                                         modifier = Modifier
                                             .height(120.dp)
@@ -263,7 +292,7 @@ fun HomeScreen(
                             }
                         }
                     }
-                } else {
+                } else if (!isLoading) {
                     // Empty state
                     Text(
                         text = "Không có phim nào để hiển thị",
@@ -284,8 +313,8 @@ fun HomeScreenPreview() {
     HomeScreen(
         navController = NavController(LocalContext.current),
         isAutoSignIn = true,
-        pageAndMovieList = GetMovieListResponse(page = 1, results = emptyList()),
         recentMovieList = sampleMovies,
-        loadMoreMovies = {}
+        loadMoreMovies = {},
+        isLoading = true
     )
 }
