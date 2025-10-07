@@ -5,6 +5,8 @@ import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.data.network.MovieApiService
 import com.app.imagerandom.data.repository.auth.AuthRepository
 import com.app.imagerandom.data.repository.auth.AuthRepositoryImpl
+import com.app.imagerandom.data.repository.categories.CategoriesRepository
+import com.app.imagerandom.data.repository.categories.CategoriesRepositoryImpl
 import com.app.imagerandom.data.repository.movies.MoviesRepository
 import com.app.imagerandom.data.repository.movies.MoviesRepositoryImpl
 import dagger.Module
@@ -36,5 +38,11 @@ object AppModule {
     @Singleton
     fun provideHomeRepository(api: MovieApiService): MoviesRepository {
         return MoviesRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoriesRepository(api: MovieApiService): CategoriesRepository {
+        return CategoriesRepositoryImpl(api)
     }
 }

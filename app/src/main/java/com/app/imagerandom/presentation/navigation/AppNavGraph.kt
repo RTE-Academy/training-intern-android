@@ -5,12 +5,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.app.imagerandom.presentation.view.auth.signInScreen
 import com.app.imagerandom.presentation.view.auth.signUpScreen
+import com.app.imagerandom.presentation.view.categories.categoriesScreen
 import com.app.imagerandom.presentation.view.home.homeScreen
 
 object Screen {
     const val SIGN_IN = "sign_in"
     const val SIGN_UP = "sign_up"
     const val HOME = "home"
+    const val CATEGORIES = "categories"
 }
 
 @Composable
@@ -22,5 +24,6 @@ fun AppNavGraph(navController: NavHostController) {
         signUpScreen(navController)
         signInScreen(navController)
         homeScreen(navController)
+        categoriesScreen(navController)
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.app.imagerandom.common.NetworkConstants
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.ui.AppColors
 import kotlinx.coroutines.delay
@@ -66,7 +67,7 @@ fun AutoSlidingBanner(
                 )
             ) {
                 AsyncImage(
-                    model = "https://image.tmdb.org/t/p/w780${movie.backdropPath}",
+                    model = NetworkConstants.IMAGE_BASE_URL + movie.backdropPath,
                     contentDescription = movie.title,
                     modifier = Modifier
                         .fillMaxSize()
@@ -92,7 +93,7 @@ fun AutoSlidingBanner(
                         .size(if (isSelected) 10.dp else 8.dp)
                         .clip(RoundedCornerShape(50))
                         .background(
-                            if (isSelected) AppColors.Primary else Color.Gray
+                            if (isSelected) AppColors.TextPrimary else Color.Gray
                         )
                 )
             }
