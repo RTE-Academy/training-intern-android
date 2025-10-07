@@ -126,9 +126,9 @@ fun CategoriesScreen(
                 .background(AppColors.Primary),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            GenreList.getGenreById(categories)?.let {
+            selectedGenre?.let { it ->
                 CategoryHeader(
-                    categories = it,
+                    selectedGenre = it,
                     onClickShowPopup = { showPopup = true },
                     onNavigateToHome = { navController.navigateToHome() }
                 )
