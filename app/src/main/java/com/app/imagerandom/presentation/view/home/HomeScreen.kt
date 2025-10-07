@@ -75,6 +75,7 @@ fun HomeScreen(
         // Hide status bar and navigation bar
         systemUiController.isStatusBarVisible = false
         systemUiController.isNavigationBarVisible = false
+        systemUiController.isSystemBarsVisible = false
     }
 
     // Auto sign in

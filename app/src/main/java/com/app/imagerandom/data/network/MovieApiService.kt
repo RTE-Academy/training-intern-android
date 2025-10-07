@@ -48,6 +48,6 @@ interface MovieApiService {
     // Lay danh sach the loai phim
     @GET("genre/movie/list")
     suspend fun getMovieGenres(
-        @Query("language") language: String = "vi-VN"
+        @Query("language") language: String = "vi-Vietnam"
     ): GenreListResponse
 }

@@ -22,12 +22,10 @@ import com.app.imagerandom.presentation.ui.AppColors
 
 @Composable
 fun CategoryHeader(
-    categories: Genre,
     onNavigateToHome: () -> Unit,
-    onClickShowPopup: () -> Unit
+    onClickShowPopup: () -> Unit,
+    selectedGenre: Genre
 ) {
-    val selectedGenre by remember { mutableStateOf(categories) }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()

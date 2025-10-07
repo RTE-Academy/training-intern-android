@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.presentation.ui.AppColors
@@ -33,7 +34,12 @@ fun GenreSelectionPopup(
 ) {
     if (!showPopup) return
 
-    Popup(alignment = Alignment.Center) {
+    Popup(
+        alignment = Alignment.Center,
+        properties = PopupProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -48,7 +54,6 @@ fun GenreSelectionPopup(
                 .padding(horizontal = 32.dp, vertical = 40.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Nút đóng
             IconButton(
                 onClick = { onDismiss() },
                 modifier = Modifier
@@ -63,7 +68,6 @@ fun GenreSelectionPopup(
                 )
             }
 
-            // Danh sách thể loại
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {

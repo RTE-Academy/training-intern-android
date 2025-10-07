@@ -7,6 +7,7 @@ import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.usecase.home.HomeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,7 +36,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadGenreList() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val response = homeUseCase.getMovieGenreList()
             GenreList.genreList = response.genres
         }
@@ -44,7 +45,7 @@ class HomeViewModel @Inject constructor(
     fun loadMovies() {
         if (isLoading || currentPage > totalPages) return
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             isLoading = true
             try {
                 val response = homeUseCase.getMovieList("vi-Vietnam", currentPage)
