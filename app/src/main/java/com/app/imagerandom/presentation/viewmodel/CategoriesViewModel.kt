@@ -31,7 +31,6 @@ class CategoriesViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-
     fun loadMoviesByGenres(genres: Int = Genres.MOVIES, isLoadMore: Boolean = false) {
         if (_isLoading.value) return
         viewModelScope.launch {
