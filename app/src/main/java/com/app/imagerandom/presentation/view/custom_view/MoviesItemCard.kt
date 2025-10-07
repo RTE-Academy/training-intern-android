@@ -28,7 +28,7 @@ import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.ui.AppColors
 
 @Composable
-fun CategoriesMoviesItemCard(movie: MovieItem, onClick: () -> Unit) {
+fun MoviesItemCard(movie: MovieItem, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -38,7 +38,7 @@ fun CategoriesMoviesItemCard(movie: MovieItem, onClick: () -> Unit) {
                 onClick()
             },
         colors = CardDefaults.cardColors(
-            containerColor = AppColors.CardBackground
+            containerColor = AppColors.Primary
         )
     ) {
         Column(

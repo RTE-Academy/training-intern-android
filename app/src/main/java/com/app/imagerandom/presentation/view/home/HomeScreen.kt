@@ -1,11 +1,5 @@
 package com.app.imagerandom.presentation.view.home
 
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,8 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -33,15 +26,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import coil.compose.AsyncImage
 import com.app.imagerandom.R
-import com.app.imagerandom.common.NetworkConstants
 import com.app.imagerandom.data.app_const.Genres
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.auth.navigateToSignIn
 import com.app.imagerandom.presentation.view.categories.navigateToCategories
+import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -106,11 +98,6 @@ fun HomeScreen(
             .background(AppColors.Primary)
             .padding(16.dp)
     ) {
-        AnimatedVisibility(
-            visible = isVisible,
-            enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut()
-        ) {
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -133,14 +120,14 @@ fun HomeScreen(
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
-                                navController.navigateToCategories(Genres.MOVIES)
+                                navController.navigateToCategories(Genres.WAR.id)
                             }
                     ) {
                         // Create references for the composables to constrain
                         val (background, image, text) = createRefs()
                         Image(
                             painter = painterResource(id = R.drawable.img_background_categories_left),
-                            contentDescription = "Background Image",
+                            contentDescription = "Left Background",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .constrainAs(background) {
@@ -150,22 +137,28 @@ fun HomeScreen(
                             contentScale = ContentScale.FillWidth
                         )
                         Image(
-                            painter = painterResource(id = R.drawable.img_categories_spiderman),
-                            contentDescription = "Spiderman Image",
+                            painter = painterResource(id = R.drawable.img_categories_sparta),
+                            contentDescription = "Left Image",
                             modifier = Modifier
                                 .constrainAs(image) {
                                     start.linkTo(background.start)
-                                    end.linkTo(text.start)
+                                    end.linkTo(background.end)
                                 },
                         )
+
                         Text(
                             modifier = Modifier
                                 .padding(top = 20.dp, end = 8.dp)
+                                .background(
+                                    color = Color.Black.copy(alpha = 0.1f),
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
                                 .constrainAs(text) {
                                     top.linkTo(background.top)
                                     end.linkTo(background.end)
                                 },
-                            text = "Movies",
+                            text = Genres.WAR.displayName,
                             color = AppColors.TextPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
@@ -178,14 +171,14 @@ fun HomeScreen(
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
-                                navController.navigateToCategories(Genres.TOONS)
+                                navController.navigateToCategories(Genres.COMEDY.id)
                             }
                     ) {
                         val (background, image, text) = createRefs()
 
                         Image(
                             painter = painterResource(id = R.drawable.img_background_categories_right),
-                            contentDescription = "Background Image",
+                            contentDescription = "Right Background",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .constrainAs(background) {
@@ -196,8 +189,8 @@ fun HomeScreen(
                         )
 
                         Image(
-                            painter = painterResource(id = R.drawable.img_categories_deku),
-                            contentDescription = "Deku Image",
+                            painter = painterResource(id = R.drawable.img_categories_comedy),
+                            contentDescription = "Right Image",
                             modifier = Modifier
                                 .aspectRatio(604f / 644f)
                                 .offset(x = 30.dp)
@@ -211,11 +204,16 @@ fun HomeScreen(
                         Text(
                             modifier = Modifier
                                 .padding(top = 20.dp, start = 8.dp)
+                                .background(
+                                    color = Color.Black.copy(alpha = 0.1f),
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
                                 .constrainAs(text) {
                                     top.linkTo(background.top)
                                     start.linkTo(parent.start)
                                 },
-                            text = "Toons",
+                            text = Genres.COMEDY.displayName,
                             color = AppColors.TextPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
@@ -260,44 +258,8 @@ fun HomeScreen(
                     ) {
                         items(recentMovieList.size) { index ->
                             val movie = recentMovieList[index]
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(180.dp)
-                                    .shadow(4.dp, RoundedCornerShape(12.dp))
-                                    .clickable {
-                                        Log.d("HomeScreen", "Clicked movie ID: ${movie.id}")
-                                    },
-                                colors = CardDefaults.cardColors(
-                                    containerColor = AppColors.Primary
-                                )
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    AsyncImage(
-                                        model = NetworkConstants.IMAGE_BASE_URL + movie.posterPath,
-                                        contentDescription = movie.title,
-                                        modifier = Modifier
-                                            .height(120.dp)
-                                            .clip(RoundedCornerShape(8.dp)),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text(
-                                        text = movie.title,
-                                        style = MaterialTheme.typography.bodyMedium.copy(
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            color = AppColors.TextSecondary
-                                        ),
-                                        textAlign = TextAlign.Center,
-                                        maxLines = 2
-                                    )
-                                }
+                            MoviesItemCard(movie = movie) {
+                                // TODO: Navigate to movie detail
                             }
                         }
                     }
@@ -311,7 +273,6 @@ fun HomeScreen(
                     )
                 }
             }
-        }
     }
 }
 

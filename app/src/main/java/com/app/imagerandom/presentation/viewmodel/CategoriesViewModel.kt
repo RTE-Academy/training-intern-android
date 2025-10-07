@@ -3,7 +3,6 @@ package com.app.imagerandom.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.imagerandom.data.app_const.Genres
-import com.app.imagerandom.domain.model.GetMovieListResponse
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.usecase.categories.CategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,13 +24,13 @@ class CategoriesViewModel @Inject constructor(
     val movieListForSlideShow: StateFlow<List<MovieItem>> =
         _movieListForSlideShow.asStateFlow()
 
-    private var currentGenres = Genres.MOVIES
+    private var currentGenres = Genres.WAR.id
     private var currentPage = 1
     private var totalPages = 10
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    fun loadMoviesByGenres(genres: Int = Genres.MOVIES, isLoadMore: Boolean = false) {
+    fun loadMoviesByGenres(genres: Int = Genres.WAR.id, isLoadMore: Boolean = false) {
         if (_isLoading.value) return
         viewModelScope.launch {
             _isLoading.value = true
