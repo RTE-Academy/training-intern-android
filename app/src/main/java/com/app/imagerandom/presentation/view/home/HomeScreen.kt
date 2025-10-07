@@ -36,10 +36,12 @@ import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import com.app.imagerandom.R
 import com.app.imagerandom.common.NetworkConstants
+import com.app.imagerandom.data.app_const.Genres
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.auth.navigateToSignIn
+import com.app.imagerandom.presentation.view.categories.navigateToCategories
 import com.app.imagerandom.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -130,6 +132,9 @@ fun HomeScreen(
                     ConstraintLayout(
                         modifier = Modifier
                             .weight(1f)
+                            .clickable {
+                                navController.navigateToCategories(Genres.MOVIES)
+                            }
                     ) {
                         // Create references for the composables to constrain
                         val (background, image, text) = createRefs()
@@ -170,7 +175,11 @@ fun HomeScreen(
                     Spacer(Modifier.width(10.dp))
 
                     ConstraintLayout(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable {
+                                navController.navigateToCategories(Genres.TOONS)
+                            }
                     ) {
                         val (background, image, text) = createRefs()
 
