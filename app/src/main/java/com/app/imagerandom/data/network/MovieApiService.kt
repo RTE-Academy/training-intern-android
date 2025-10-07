@@ -35,4 +35,12 @@ interface MovieApiService {
         @Query("language") language: String = "en-US",
         @Query("page") page: Int = 1
     ): GetMovieListResponse
+
+    // Lay danh sach phim theo the loai
+    @GET("discover/movie")
+    suspend fun getMovieListByGenres(
+        @Query("language") language: String = "en-US",
+        @Query("page") page: Int = 1,
+        @Query("with_genres") genreId: Int? = null
+    ): GetMovieListResponse
 }
