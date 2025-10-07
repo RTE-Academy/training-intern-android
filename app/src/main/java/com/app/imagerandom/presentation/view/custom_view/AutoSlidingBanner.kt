@@ -9,6 +9,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -43,7 +44,9 @@ fun AutoSlidingBanner(
 
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Banner
@@ -66,15 +69,35 @@ fun AutoSlidingBanner(
                     containerColor = AppColors.CardBackground
                 )
             ) {
-                AsyncImage(
-                    model = NetworkConstants.IMAGE_BASE_URL + movie.backdropPath,
-                    contentDescription = movie.title,
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(10.dp)),
-                    contentScale = ContentScale.Crop
-                )
+                        .clip(RoundedCornerShape(10.dp))
+                ) {
+                    AsyncImage(
+                        model = NetworkConstants.IMAGE_BASE_URL + movie.backdropPath,
+                        contentDescription = movie.title,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .background(
+                                Color.Black.copy(alpha = 0.5f)
+                            )
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = movie.title,
+                            color = Color.White
+                        )
+                    }
+                }
             }
+
         }
 
         Spacer(modifier = Modifier.height(8.dp))
