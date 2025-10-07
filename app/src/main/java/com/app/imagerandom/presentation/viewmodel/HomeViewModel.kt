@@ -2,6 +2,7 @@ package com.app.imagerandom.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.usecase.home.HomeUseCase
@@ -26,10 +27,18 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadMovies()
+        loadGenreList()
     }
 
     fun checkAutoSignIn(): Boolean {
         return !sharedPrefHelper.getSessionId().isNullOrEmpty()
+    }
+
+    private fun loadGenreList() {
+        viewModelScope.launch {
+            val response = homeUseCase.getMovieGenreList()
+            GenreList.genreList = response.genres
+        }
     }
 
     fun loadMovies() {
