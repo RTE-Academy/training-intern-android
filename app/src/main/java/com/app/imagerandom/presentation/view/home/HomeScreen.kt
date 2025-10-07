@@ -27,7 +27,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.app.imagerandom.R
-import com.app.imagerandom.data.app_const.Genres
+import com.app.imagerandom.common.GenreList
+import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
@@ -35,6 +36,7 @@ import com.app.imagerandom.presentation.view.auth.navigateToSignIn
 import com.app.imagerandom.presentation.view.categories.navigateToCategories
 import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.viewmodel.HomeViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 fun NavController.navigateToHome() {
@@ -66,11 +68,13 @@ fun HomeScreen(
     recentMovieList: List<MovieItem>,
     loadMoreMovies: () -> Unit,
 ) {
-    var isVisible by remember { mutableStateOf(false) }
     val gridState = rememberLazyGridState()
+    val systemUiController = rememberSystemUiController()
 
     LaunchedEffect(Unit) {
-        isVisible = true
+        // Hide status bar and navigation bar
+        systemUiController.isStatusBarVisible = false
+        systemUiController.isNavigationBarVisible = false
     }
 
     // Auto sign in
@@ -120,7 +124,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
-                                navController.navigateToCategories(Genres.WAR.id)
+                                navController.navigateToCategories(GenreList.genreList[17].id)
                             }
                     ) {
                         // Create references for the composables to constrain
@@ -145,7 +149,7 @@ fun HomeScreen(
                                     end.linkTo(background.end)
                                 },
                         )
-
+                        val leftGenre = GenreList.genreList.getOrNull(17) ?: Genre(0, "Unknown")
                         Text(
                             modifier = Modifier
                                 .padding(top = 20.dp, end = 8.dp)
@@ -158,7 +162,7 @@ fun HomeScreen(
                                     top.linkTo(background.top)
                                     end.linkTo(background.end)
                                 },
-                            text = Genres.WAR.displayName,
+                            text = leftGenre.name,
                             color = AppColors.TextPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
@@ -171,7 +175,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
-                                navController.navigateToCategories(Genres.COMEDY.id)
+                                navController.navigateToCategories(GenreList.genreList[3].id)
                             }
                     ) {
                         val (background, image, text) = createRefs()
@@ -200,7 +204,7 @@ fun HomeScreen(
                                 },
                             contentScale = ContentScale.Fit
                         )
-
+                        val rightGenre = GenreList.genreList.getOrNull(3) ?: Genre(0, "Unknown")
                         Text(
                             modifier = Modifier
                                 .padding(top = 20.dp, start = 8.dp)
@@ -213,7 +217,7 @@ fun HomeScreen(
                                     top.linkTo(background.top)
                                     start.linkTo(parent.start)
                                 },
-                            text = Genres.COMEDY.displayName,
+                            text = rightGenre.name,
                             color = AppColors.TextPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp

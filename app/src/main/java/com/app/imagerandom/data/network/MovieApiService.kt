@@ -2,6 +2,7 @@ package com.app.imagerandom.data.network
 
 import com.app.imagerandom.domain.model.CreateSessionRequest
 import com.app.imagerandom.domain.model.CreateSessionResponse
+import com.app.imagerandom.domain.model.GenreListResponse
 import com.app.imagerandom.domain.model.GetMovieListResponse
 import retrofit2.http.GET
 import com.app.imagerandom.domain.model.RequestTokenResponse
@@ -43,4 +44,10 @@ interface MovieApiService {
         @Query("page") page: Int = 1,
         @Query("with_genres") genreId: Int? = null
     ): GetMovieListResponse
+
+    // Lay danh sach the loai phim
+    @GET("genre/movie/list")
+    suspend fun getMovieGenres(
+        @Query("language") language: String = "vi-VN"
+    ): GenreListResponse
 }

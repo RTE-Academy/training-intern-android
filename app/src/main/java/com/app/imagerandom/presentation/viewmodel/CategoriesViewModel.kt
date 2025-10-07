@@ -2,7 +2,7 @@ package com.app.imagerandom.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.imagerandom.data.app_const.Genres
+import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.usecase.categories.CategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,13 +24,13 @@ class CategoriesViewModel @Inject constructor(
     val movieListForSlideShow: StateFlow<List<MovieItem>> =
         _movieListForSlideShow.asStateFlow()
 
-    private var currentGenres = Genres.WAR.id
+    private var currentGenres = GenreList.genreList[17].id
     private var currentPage = 1
     private var totalPages = 10
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    fun loadMoviesByGenres(genres: Int = Genres.WAR.id, isLoadMore: Boolean = false) {
+    fun loadMoviesByGenres(genres: Int = GenreList.genreList[17].id, isLoadMore: Boolean = false) {
         if (_isLoading.value) return
         viewModelScope.launch {
             _isLoading.value = true
@@ -52,7 +52,7 @@ class CategoriesViewModel @Inject constructor(
                         _movies.value += result.results
                     } else {
                         _movies.value = result.results
-                        _movieListForSlideShow.value = result.results
+                        _movieListForSlideShow.value = result.results.take((result.results.size / 3.0).toInt())
                         totalPages = result.totalPages
                     }
                     currentPage++

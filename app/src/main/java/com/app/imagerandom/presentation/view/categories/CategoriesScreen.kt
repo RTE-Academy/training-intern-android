@@ -1,10 +1,5 @@
 package com.app.imagerandom.presentation.view.categories
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,12 +34,13 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.app.imagerandom.data.app_const.Genres
+import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.custom_view.AutoSlidingBanner
 import com.app.imagerandom.presentation.view.custom_view.CategoryHeader
+import com.app.imagerandom.presentation.view.custom_view.GenreSelectionPopup
 import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.view.home.navigateToHome
 import com.app.imagerandom.presentation.viewmodel.CategoriesViewModel
@@ -56,14 +54,14 @@ fun NavGraphBuilder.categoriesScreen(navController: NavController) {
     composable(
         route = "${Screen.CATEGORIES}?categories={categories}",
         arguments = listOf(
-            navArgument("categories") { defaultValue = Genres.WAR.id }
+            navArgument("categories") { defaultValue = GenreList.genreList.firstOrNull()?.id ?: 0 }
         )
     ) {
         val viewModel = hiltViewModel<CategoriesViewModel>()
         val movieListForSlideShow by viewModel.movieListForSlideShow.collectAsState()
         val movieList by viewModel.movies.collectAsState()
         val isLoading by viewModel.isLoading.collectAsState()
-        val categories = it.arguments?.getInt("categories") ?: Genres.WAR.id
+        val categories = it.arguments?.getInt("categories") ?: GenreList.genreList[17].id
         LaunchedEffect(Unit) { viewModel.loadMoviesByGenres(genres = categories) }
         CategoriesScreen(
             navController = navController,
@@ -90,6 +88,10 @@ fun CategoriesScreen(
     onCategoryChanged: (Int) -> Unit,
 ) {
     val gridState = rememberLazyGridState()
+    var showPopup by remember { mutableStateOf(false) }
+    var selectedGenre by remember {
+        mutableStateOf(GenreList.genreList.firstOrNull { it.id == categories })
+    }
 
     // Observe grid scroll to load more movies
     LaunchedEffect(gridState) {
@@ -103,22 +105,34 @@ fun CategoriesScreen(
             }
     }
 
-    Box(
+    GenreSelectionPopup(
+        showPopup = showPopup,
+        selectedGenre = selectedGenre,
+        onDismiss = { showPopup = false },
+        onCategorySelected = { genre ->
+            selectedGenre = genre
+            onCategoryChanged(genre.id)
+        }
+    )
+
+    Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppColors.Primary)
-    ) {
+    ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(AppColors.Primary),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            CategoryHeader(
-                categories = categories,
-                onCategorySelected = { newGenre ->
-                    onCategoryChanged(newGenre.id)
-                },
-                onNavigateToHome = { navController.navigateToHome() }
-            )
+            GenreList.getGenreById(categories)?.let {
+                CategoryHeader(
+                    categories = it,
+                    onClickShowPopup = { showPopup = true },
+                    onNavigateToHome = { navController.navigateToHome() }
+                )
+            }
 
             if (movieListForSlideShow.isNotEmpty()) {
                 // Pager for slide movies
