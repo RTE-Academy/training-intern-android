@@ -52,7 +52,7 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
         route = Screen.HOME,
     ) {
         val viewModel = hiltViewModel<HomeViewModel>()
-        val recentMovieList by viewModel::movies
+        val recentMovieList by viewModel.movies.collectAsState()
         val isLoading by viewModel::isLoading
         HomeScreen(
             navController = navController,

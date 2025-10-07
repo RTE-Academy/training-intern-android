@@ -1,14 +1,14 @@
 package com.app.imagerandom.presentation.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.usecase.home.HomeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +18,8 @@ class HomeViewModel @Inject constructor(
     private val homeUseCase: HomeUseCase
 ) : ViewModel() {
 
-    var movies by mutableStateOf<List<MovieItem>>(emptyList())
+    private val _movies = MutableStateFlow<List<MovieItem>>(emptyList())
+    val movies: StateFlow<List<MovieItem>> = _movies.asStateFlow()
     private var currentPage = 1
     private var totalPages = Int.MAX_VALUE
     var isLoading = false
@@ -39,7 +40,7 @@ class HomeViewModel @Inject constructor(
             try {
                 val response = homeUseCase.getMovieList("vi-Vietnam", currentPage)
                 if (response.results.isNotEmpty()) {
-                    movies = movies + response.results
+                    _movies.value += response.results
                     currentPage++
                     totalPages = response.totalPages
                 }
