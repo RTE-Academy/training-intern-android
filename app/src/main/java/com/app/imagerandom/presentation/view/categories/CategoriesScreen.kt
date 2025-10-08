@@ -34,7 +34,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.app.imagerandom.common.GenreList
+import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
@@ -54,19 +54,21 @@ fun NavGraphBuilder.categoriesScreen(navController: NavController) {
     composable(
         route = "${Screen.CATEGORIES}?categories={categories}",
         arguments = listOf(
-            navArgument("categories") { defaultValue = GenreList.genreList.firstOrNull()?.id ?: 0 }
+            navArgument("categories") { defaultValue = 10768 }
         )
     ) {
         val viewModel = hiltViewModel<CategoriesViewModel>()
         val movieListForSlideShow by viewModel.movieListForSlideShow.collectAsState()
         val movieList by viewModel.movies.collectAsState()
+        val genresList by viewModel.genres.collectAsState()
         val isLoading by viewModel.isLoading.collectAsState()
-        val categories = it.arguments?.getInt("categories") ?: GenreList.genreList[17].id
+        val categories = it.arguments?.getInt("categories") ?: 10768
         LaunchedEffect(Unit) { viewModel.loadMoviesByGenres(genres = categories) }
         CategoriesScreen(
             navController = navController,
             movieListForSlideShow = movieListForSlideShow,
             movieList = movieList,
+            genresList = genresList,
             isLoading = isLoading,
             categories = categories,
             loadMoreMovies = { viewModel.loadMoviesByGenres(isLoadMore = true) },
@@ -82,6 +84,7 @@ fun CategoriesScreen(
     navController: NavController,
     movieListForSlideShow: List<MovieItem>,
     movieList: List<MovieItem>,
+    genresList: List<Genre>,
     isLoading: Boolean,
     categories: Int,
     loadMoreMovies: () -> Unit,
@@ -89,8 +92,12 @@ fun CategoriesScreen(
 ) {
     val gridState = rememberLazyGridState()
     var showPopup by remember { mutableStateOf(false) }
-    var selectedGenre by remember {
-        mutableStateOf(GenreList.genreList.firstOrNull { it.id == categories })
+    var selectedGenre by remember { mutableStateOf<Genre?>(null) }
+
+    LaunchedEffect(genresList) {
+        if (selectedGenre == null && genresList.isNotEmpty()) {
+            selectedGenre = genresList.firstOrNull { it.id == categories } ?: genresList.first()
+        }
     }
 
     // Observe grid scroll to load more movies
@@ -108,6 +115,7 @@ fun CategoriesScreen(
     GenreSelectionPopup(
         showPopup = showPopup,
         selectedGenre = selectedGenre,
+        genreList = genresList,
         onDismiss = { showPopup = false },
         onCategorySelected = { genre ->
             selectedGenre = genre

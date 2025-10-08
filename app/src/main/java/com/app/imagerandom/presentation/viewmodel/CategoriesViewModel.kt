@@ -2,10 +2,12 @@ package com.app.imagerandom.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.imagerandom.common.GenreList
+import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
-import com.app.imagerandom.domain.usecase.categories.CategoriesUseCase
+import com.app.imagerandom.domain.usecase.categories.GetMovieListByGenresUseCase
+import com.app.imagerandom.domain.usecase.genres.GetMovieGenreListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
-    private val categoriesUseCase: CategoriesUseCase,
+    private val getMovieListByGenresUseCase: GetMovieListByGenresUseCase,
+    private val getMovieGenreListUseCase: GetMovieGenreListUseCase
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<MovieItem>>(emptyList())
@@ -24,15 +27,22 @@ class CategoriesViewModel @Inject constructor(
     val movieListForSlideShow: StateFlow<List<MovieItem>> =
         _movieListForSlideShow.asStateFlow()
 
-    private var currentGenres = GenreList.genreList[17].id
+    private val _genres = MutableStateFlow<List<Genre>>(emptyList())
+    val genres: StateFlow<List<Genre>> = _genres.asStateFlow()
+
+    private var currentGenres = 10768
     private var currentPage = 1
     private var totalPages = 10
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    fun loadMoviesByGenres(genres: Int = GenreList.genreList[17].id, isLoadMore: Boolean = false) {
+    init {
+        loadGenresList()
+    }
+
+    fun loadMoviesByGenres(genres: Int = 10768, isLoadMore: Boolean = false) {
         if (_isLoading.value) return
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _isLoading.value = true
             try {
                 if (!isLoadMore) {
@@ -41,7 +51,7 @@ class CategoriesViewModel @Inject constructor(
                     _movies.value = emptyList()
                 }
 
-                val result = categoriesUseCase.getMovieListByGenres(
+                val result = getMovieListByGenresUseCase.getMovieListByGenres(
                     "vi-VN",
                     currentPage,
                     currentGenres
@@ -60,6 +70,12 @@ class CategoriesViewModel @Inject constructor(
             } finally {
                 _isLoading.value = false
             }
+        }
+    }
+
+    private fun loadGenresList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _genres.value = getMovieGenreListUseCase.getAllGenres()
         }
     }
 }

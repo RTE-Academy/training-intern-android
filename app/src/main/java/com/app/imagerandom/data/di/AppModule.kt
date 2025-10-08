@@ -67,7 +67,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGenreRepository(dao: GenreDao): GenreRepository {
-        return GenreRepositoryImpl(dao)
+    fun provideGenreRepository(dao: GenreDao, api: MovieApiService): GenreRepository {
+        return GenreRepositoryImpl(dao = dao, apiService = api)
     }
 }

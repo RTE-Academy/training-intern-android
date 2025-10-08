@@ -2,11 +2,11 @@ package com.app.imagerandom.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.domain.model.ApiErrorResponse
-import com.app.imagerandom.domain.usecase.auth.AuthUseCase
-import com.app.imagerandom.domain.usecase.genres.GenreUseCase
+import com.app.imagerandom.domain.usecase.auth.StartAuthFlowUseCase
+import com.app.imagerandom.domain.usecase.genres.FetchMovieGenreListUseCase
+import com.app.imagerandom.domain.usecase.genres.SaveMovieGenreListUseCase
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,8 +19,9 @@ import retrofit2.HttpException
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase,
-    private val genreUseCase: GenreUseCase,
+    private val startAuthFlowUseCase: StartAuthFlowUseCase,
+    private val saveMovieGenreListUseCase: SaveMovieGenreListUseCase,
+    private val fetchMovieGenreListUseCase: FetchMovieGenreListUseCase,
     private val sharedPrefHelper: SharedPrefHelper
 ) : ViewModel() {
 
@@ -30,7 +31,7 @@ class AuthViewModel @Inject constructor(
     fun startAuthFlow(username: String, password: String, navigateToHomeScreen: () -> Unit) {
         viewModelScope.launch {
             try {
-                val result = authUseCase.startAuthFlow(username, password)
+                val result = startAuthFlowUseCase.startAuthFlow(username, password)
 
                 if (result.isNotEmpty()) {
                     // Create session
@@ -64,10 +65,9 @@ class AuthViewModel @Inject constructor(
 
     private fun loadGenresFromApi() {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = authUseCase.getMovieGenreList()
+            val response = fetchMovieGenreListUseCase.fetchMovieGenreList()
             val list = response.genres
-            genreUseCase.saveMovieGenreList(list)
-            GenreList.genreList = list
+            saveMovieGenreListUseCase.saveMovieGenreList(list)
         }
     }
 }
