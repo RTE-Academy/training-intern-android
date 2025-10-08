@@ -1,6 +1,7 @@
 package com.app.imagerandom.domain.usecase.auth
 
 import com.app.imagerandom.data.repository.auth.AuthRepository
+import com.app.imagerandom.domain.model.GenreListResponse
 import javax.inject.Inject
 
 class AuthUseCase @Inject constructor(
@@ -20,5 +21,8 @@ class AuthUseCase @Inject constructor(
         val sessionResult = repo.createSessionToken(requestToken)
         return sessionResult.sessionId
     }
+
+    // Lay danh sach the loai phim
+    suspend fun getMovieGenreList(): GenreListResponse = repo.getMovieGenreList()
 }
 

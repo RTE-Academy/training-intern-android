@@ -2,9 +2,9 @@ package com.app.imagerandom.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.domain.model.MovieItem
+import com.app.imagerandom.domain.usecase.genres.GenreUseCase
 import com.app.imagerandom.domain.usecase.home.HomeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val sharedPrefHelper: SharedPrefHelper,
-    private val homeUseCase: HomeUseCase
+    private val homeUseCase: HomeUseCase,
+    private val genreUseCase: GenreUseCase
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<MovieItem>>(emptyList())
@@ -28,18 +29,11 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadMovies()
-        loadGenreList()
+        loadGenresList()
     }
 
     fun checkAutoSignIn(): Boolean {
         return !sharedPrefHelper.getSessionId().isNullOrEmpty()
-    }
-
-    private fun loadGenreList() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = homeUseCase.getMovieGenreList()
-            GenreList.genreList = response.genres
-        }
     }
 
     fun loadMovies() {
@@ -58,6 +52,12 @@ class HomeViewModel @Inject constructor(
             } finally {
                 isLoading = false
             }
+        }
+    }
+
+    private fun loadGenresList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            genreUseCase.getAllGenres()
         }
     }
 }
