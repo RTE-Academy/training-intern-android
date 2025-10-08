@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,10 +28,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.app.imagerandom.R
 import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
+import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.auth.navigateToSignIn
@@ -38,6 +42,7 @@ import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.viewmodel.HomeViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 fun NavController.navigateToHome() {
     navigate(Screen.HOME)
@@ -60,6 +65,7 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -70,6 +76,9 @@ fun HomeScreen(
 ) {
     val gridState = rememberLazyGridState()
     val systemUiController = rememberSystemUiController()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     LaunchedEffect(Unit) {
         // Hide status bar and navigation bar
@@ -96,188 +105,229 @@ fun HomeScreen(
                 }
             }
     }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AppColors.Primary)
-            .padding(16.dp)
-    ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text(
-                    text = "Khám Phá Phim Hot Nhất",
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp,
-                        color = AppColors.TextPrimary
-                    ),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                ) {
-                    ConstraintLayout(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable {
-                                navController.navigateToCategories(GenreList.genreList[17].id)
-                            }
-                    ) {
-                        // Create references for the composables to constrain
-                        val (background, image, text) = createRefs()
-                        Image(
-                            painter = painterResource(id = R.drawable.img_background_categories_left),
-                            contentDescription = "Left Background",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .constrainAs(background) {
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                },
-                            contentScale = ContentScale.FillWidth
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.img_categories_sparta),
-                            contentDescription = "Left Image",
-                            modifier = Modifier
-                                .constrainAs(image) {
-                                    start.linkTo(background.start)
-                                    end.linkTo(background.end)
-                                },
-                        )
-                        val leftGenre = GenreList.genreList.getOrNull(17) ?: Genre(0, "Unknown")
-                        Text(
-                            modifier = Modifier
-                                .padding(top = 20.dp, end = 8.dp)
-                                .background(
-                                    color = Color.Black.copy(alpha = 0.1f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                                .constrainAs(text) {
-                                    top.linkTo(background.top)
-                                    end.linkTo(background.end)
-                                },
-                            text = leftGenre.name,
-                            color = AppColors.TextPrimary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
-                    }
-
-                    Spacer(Modifier.width(10.dp))
-
-                    ConstraintLayout(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable {
-                                navController.navigateToCategories(GenreList.genreList[3].id)
-                            }
-                    ) {
-                        val (background, image, text) = createRefs()
-
-                        Image(
-                            painter = painterResource(id = R.drawable.img_background_categories_right),
-                            contentDescription = "Right Background",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .constrainAs(background) {
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                },
-                            contentScale = ContentScale.FillWidth
-                        )
-
-                        Image(
-                            painter = painterResource(id = R.drawable.img_categories_comedy),
-                            contentDescription = "Right Image",
-                            modifier = Modifier
-                                .aspectRatio(604f / 644f)
-                                .offset(x = 30.dp)
-                                .constrainAs(image) {
-                                    end.linkTo(parent.end)
-                                    bottom.linkTo(parent.bottom)
-                                },
-                            contentScale = ContentScale.Fit
-                        )
-                        val rightGenre = GenreList.genreList.getOrNull(3) ?: Genre(0, "Unknown")
-                        Text(
-                            modifier = Modifier
-                                .padding(top = 20.dp, start = 8.dp)
-                                .background(
-                                    color = Color.Black.copy(alpha = 0.1f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                                .constrainAs(text) {
-                                    top.linkTo(background.top)
-                                    start.linkTo(parent.start)
-                                },
-                            text = rightGenre.name,
-                            color = AppColors.TextPrimary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
-                    }
-                }
-
-                Text(
-                    text = "Phim Mới Cập Nhật",
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp,
-                        color = AppColors.TextPrimary
-                    )
-                )
-
-                if (isLoading) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                    ) {
-                        LinearProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(4.dp),
-                            color = AppColors.TextPrimary,
-                            trackColor = AppColors.Error
-                        )
-                    }
-                }
-
-                if (recentMovieList.isNotEmpty()) {
-                    // List movies
-                    LazyVerticalGrid(
-                        state = gridState,
-                        columns = GridCells.Fixed(3),
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(5.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(recentMovieList.size) { index ->
-                            val movie = recentMovieList[index]
-                            MoviesItemCard(movie = movie) {
-                                // TODO: Navigate to movie detail
-                            }
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppDrawer(
+                selectedRoute = currentRoute,
+                onNavigate = { route ->
+                    scope.launch { drawerState.close() }
+                    if (route != currentRoute) {
+                        navController.navigate(route) {
+                            popUpTo(Screen.HOME) { inclusive = false }
+                            launchSingleTop = true
                         }
                     }
-                } else if (!isLoading) {
-                    // Empty state
+                },
+                onLogout = {
+                    scope.launch { drawerState.close() }
+                    navController.navigateToSignIn("", "")
+                }
+            )
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "Khám Phá Phim Hot Nhất",
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 28.sp,
+                                color = AppColors.TextPrimary
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(
+                                Icons.Default.Menu,
+                                contentDescription = "Menu",
+                                tint = AppColors.TextPrimary
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = AppColors.Primary)
+                )
+            },
+            containerColor = AppColors.Primary
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(AppColors.Primary)
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                    ) {
+                        ConstraintLayout(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    navController.navigateToCategories(GenreList.genreList[17].id)
+                                }
+                        ) {
+                            // Create references for the composables to constrain
+                            val (background, image, text) = createRefs()
+                            Image(
+                                painter = painterResource(id = R.drawable.img_background_categories_left),
+                                contentDescription = "Left Background",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .constrainAs(background) {
+                                        start.linkTo(parent.start)
+                                        end.linkTo(parent.end)
+                                    },
+                                contentScale = ContentScale.FillWidth
+                            )
+                            Image(
+                                painter = painterResource(id = R.drawable.img_categories_sparta),
+                                contentDescription = "Left Image",
+                                modifier = Modifier
+                                    .constrainAs(image) {
+                                        start.linkTo(background.start)
+                                        end.linkTo(background.end)
+                                    },
+                            )
+                            val leftGenre = GenreList.genreList.getOrNull(17) ?: Genre(0, "Unknown")
+                            Text(
+                                modifier = Modifier
+                                    .padding(top = 20.dp, end = 8.dp)
+                                    .background(
+                                        color = Color.Black.copy(alpha = 0.1f),
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    .constrainAs(text) {
+                                        top.linkTo(background.top)
+                                        end.linkTo(background.end)
+                                    },
+                                text = leftGenre.name,
+                                color = AppColors.TextPrimary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            )
+                        }
+
+                        Spacer(Modifier.width(10.dp))
+
+                        ConstraintLayout(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    navController.navigateToCategories(GenreList.genreList[3].id)
+                                }
+                        ) {
+                            val (background, image, text) = createRefs()
+
+                            Image(
+                                painter = painterResource(id = R.drawable.img_background_categories_right),
+                                contentDescription = "Right Background",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .constrainAs(background) {
+                                        start.linkTo(parent.start)
+                                        end.linkTo(parent.end)
+                                    },
+                                contentScale = ContentScale.FillWidth
+                            )
+
+                            Image(
+                                painter = painterResource(id = R.drawable.img_categories_comedy),
+                                contentDescription = "Right Image",
+                                modifier = Modifier
+                                    .aspectRatio(604f / 644f)
+                                    .offset(x = 30.dp)
+                                    .constrainAs(image) {
+                                        end.linkTo(parent.end)
+                                        bottom.linkTo(parent.bottom)
+                                    },
+                                contentScale = ContentScale.Fit
+                            )
+                            val rightGenre = GenreList.genreList.getOrNull(3) ?: Genre(0, "Unknown")
+                            Text(
+                                modifier = Modifier
+                                    .padding(top = 20.dp, start = 8.dp)
+                                    .background(
+                                        color = Color.Black.copy(alpha = 0.1f),
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    .constrainAs(text) {
+                                        top.linkTo(background.top)
+                                        start.linkTo(parent.start)
+                                    },
+                                text = rightGenre.name,
+                                color = AppColors.TextPrimary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            )
+                        }
+                    }
+
                     Text(
-                        text = "Không có phim nào để hiển thị",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = AppColors.TextSecondary,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        text = "Phim Mới Cập Nhật",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            color = AppColors.TextPrimary
+                        )
                     )
+
+                    if (isLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp)
+                        ) {
+                            LinearProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(4.dp),
+                                color = AppColors.TextPrimary,
+                                trackColor = AppColors.Error
+                            )
+                        }
+                    }
+
+                    if (recentMovieList.isNotEmpty()) {
+                        // List movies
+                        LazyVerticalGrid(
+                            state = gridState,
+                            columns = GridCells.Fixed(3),
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(5.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(recentMovieList.size) { index ->
+                                val movie = recentMovieList[index]
+                                MoviesItemCard(movie = movie) {
+                                    // TODO: Navigate to movie detail
+                                }
+                            }
+                        }
+                    } else if (!isLoading) {
+                        // Empty state
+                        Text(
+                            text = "Không có phim nào để hiển thị",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = AppColors.TextSecondary,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
                 }
             }
+        }
     }
 }
 

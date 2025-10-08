@@ -1,14 +1,15 @@
 package com.app.imagerandom.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.domain.model.ApiErrorResponse
 import com.app.imagerandom.domain.usecase.auth.AuthUseCase
+import com.app.imagerandom.domain.usecase.genres.GenreUseCase
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +20,7 @@ import retrofit2.HttpException
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
+    private val genreUseCase: GenreUseCase,
     private val sharedPrefHelper: SharedPrefHelper
 ) : ViewModel() {
 
@@ -33,6 +35,7 @@ class AuthViewModel @Inject constructor(
                 if (result.isNotEmpty()) {
                     // Create session
                     sharedPrefHelper.saveSessionId(result)
+                    loadGenresFromApi()
                     navigateToHomeScreen()
                 } else {
                     _error.value = "Token không hợp lệ"
@@ -56,6 +59,15 @@ class AuthViewModel @Inject constructor(
                 }
                 _error.value = errorMessage
             }
+        }
+    }
+
+    private fun loadGenresFromApi() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = authUseCase.getMovieGenreList()
+            val list = response.genres
+            genreUseCase.saveMovieGenreList(list)
+            GenreList.genreList = list
         }
     }
 }

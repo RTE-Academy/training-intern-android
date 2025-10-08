@@ -1,12 +1,17 @@
 package com.app.imagerandom.data.di
 
 import android.content.Context
+import androidx.room.Room
 import com.app.imagerandom.data.local.SharedPrefHelper
+import com.app.imagerandom.data.local.dao.GenreDao
+import com.app.imagerandom.data.local.db.AppDatabase
 import com.app.imagerandom.data.network.MovieApiService
 import com.app.imagerandom.data.repository.auth.AuthRepository
 import com.app.imagerandom.data.repository.auth.AuthRepositoryImpl
 import com.app.imagerandom.data.repository.categories.CategoriesRepository
 import com.app.imagerandom.data.repository.categories.CategoriesRepositoryImpl
+import com.app.imagerandom.data.repository.genre.GenreRepository
+import com.app.imagerandom.data.repository.genre.GenreRepositoryImpl
 import com.app.imagerandom.data.repository.movies.MoviesRepository
 import com.app.imagerandom.data.repository.movies.MoviesRepositoryImpl
 import dagger.Module
@@ -44,5 +49,25 @@ object AppModule {
     @Singleton
     fun provideCategoriesRepository(api: MovieApiService): CategoriesRepository {
         return CategoriesRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            "app_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGenreDao(db: AppDatabase): GenreDao = db.genreDao()
+
+    @Provides
+    @Singleton
+    fun provideGenreRepository(dao: GenreDao): GenreRepository {
+        return GenreRepositoryImpl(dao)
     }
 }

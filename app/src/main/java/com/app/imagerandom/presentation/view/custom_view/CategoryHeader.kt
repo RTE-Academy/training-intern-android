@@ -52,21 +52,20 @@ fun CategoryHeader(
             modifier = Modifier
                 .align(Alignment.Center)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color.White)
                 .clickable { onClickShowPopup() }
                 .padding(horizontal = 14.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = selectedGenre.name,
-                color = AppColors.Primary,
+                color = AppColors.TextPrimary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
                 contentDescription = "Select Genre",
-                tint = AppColors.Primary,
+                tint = AppColors.TextPrimary,
                 modifier = Modifier.size(24.dp)
             )
         }
