@@ -3,8 +3,9 @@ package com.app.imagerandom.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.imagerandom.data.local.SharedPrefHelper
+import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
-import com.app.imagerandom.domain.usecase.genres.GenreUseCase
+import com.app.imagerandom.domain.usecase.genres.GetMovieGenreListUseCase
 import com.app.imagerandom.domain.usecase.home.HomeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,11 +19,15 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val sharedPrefHelper: SharedPrefHelper,
     private val homeUseCase: HomeUseCase,
-    private val genreUseCase: GenreUseCase
+    private val getMovieGenreListUseCase: GetMovieGenreListUseCase
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<MovieItem>>(emptyList())
     val movies: StateFlow<List<MovieItem>> = _movies.asStateFlow()
+
+    private val _genres = MutableStateFlow<List<Genre>>(emptyList())
+    val genres: StateFlow<List<Genre>> = _genres.asStateFlow()
+
     private var currentPage = 1
     private var totalPages = Int.MAX_VALUE
     var isLoading = false
@@ -57,7 +62,7 @@ class HomeViewModel @Inject constructor(
 
     private fun loadGenresList() {
         viewModelScope.launch(Dispatchers.IO) {
-            genreUseCase.getAllGenres()
+            _genres.value = getMovieGenreListUseCase.getAllGenres()
         }
     }
 }

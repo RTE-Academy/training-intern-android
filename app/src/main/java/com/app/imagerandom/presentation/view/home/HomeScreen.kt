@@ -30,7 +30,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.app.imagerandom.R
-import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.AppDrawer
@@ -54,12 +53,14 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
     ) {
         val viewModel = hiltViewModel<HomeViewModel>()
         val recentMovieList by viewModel.movies.collectAsState()
+        val genresList by viewModel.genres.collectAsState()
         val isLoading by viewModel::isLoading
         HomeScreen(
             navController = navController,
             isAutoSignIn = viewModel.checkAutoSignIn(),
             isLoading = isLoading,
             recentMovieList = recentMovieList,
+            genresList = genresList,
             loadMoreMovies = viewModel::loadMovies
         )
     }
@@ -72,7 +73,8 @@ fun HomeScreen(
     isAutoSignIn: Boolean,
     isLoading: Boolean,
     recentMovieList: List<MovieItem>,
-    loadMoreMovies: () -> Unit,
+    genresList: List<Genre>,
+    loadMoreMovies: () -> Unit
 ) {
     val gridState = rememberLazyGridState()
     val systemUiController = rememberSystemUiController()
@@ -173,7 +175,8 @@ fun HomeScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable {
-                                    navController.navigateToCategories(GenreList.genreList[17].id)
+                                    navController.navigateToCategories(
+                                        genresList.getOrNull(17)?.id ?: 10768)
                                 }
                         ) {
                             // Create references for the composables to constrain
@@ -198,7 +201,6 @@ fun HomeScreen(
                                         end.linkTo(background.end)
                                     },
                             )
-                            val leftGenre = GenreList.genreList.getOrNull(17) ?: Genre(0, "Unknown")
                             Text(
                                 modifier = Modifier
                                     .padding(top = 20.dp, end = 8.dp)
@@ -211,7 +213,7 @@ fun HomeScreen(
                                         top.linkTo(background.top)
                                         end.linkTo(background.end)
                                     },
-                                text = leftGenre.name,
+                                text = genresList.getOrNull(17)?.name ?: "Phim Chiến Tranh",
                                 color = AppColors.TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp
@@ -224,7 +226,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable {
-                                    navController.navigateToCategories(GenreList.genreList[3].id)
+                                    navController.navigateToCategories(genresList.getOrNull(3)?.id ?: 35)
                                 }
                         ) {
                             val (background, image, text) = createRefs()
@@ -253,7 +255,6 @@ fun HomeScreen(
                                     },
                                 contentScale = ContentScale.Fit
                             )
-                            val rightGenre = GenreList.genreList.getOrNull(3) ?: Genre(0, "Unknown")
                             Text(
                                 modifier = Modifier
                                     .padding(top = 20.dp, start = 8.dp)
@@ -266,7 +267,7 @@ fun HomeScreen(
                                         top.linkTo(background.top)
                                         start.linkTo(parent.start)
                                     },
-                                text = rightGenre.name,
+                                text = genresList.getOrNull(3)?.name ?: "Phim Hài",
                                 color = AppColors.TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp
@@ -338,8 +339,9 @@ fun HomeScreenPreview() {
     HomeScreen(
         navController = NavController(LocalContext.current),
         isAutoSignIn = true,
+        isLoading = true,
         recentMovieList = sampleMovies,
         loadMoreMovies = {},
-        isLoading = true
+        genresList = emptyList()
     )
 }

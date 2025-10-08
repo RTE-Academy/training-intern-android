@@ -3,7 +3,6 @@ package com.app.imagerandom.data.repository.auth
 import com.app.imagerandom.data.network.MovieApiService
 import com.app.imagerandom.domain.model.CreateSessionRequest
 import com.app.imagerandom.domain.model.CreateSessionResponse
-import com.app.imagerandom.domain.model.GenreListResponse
 import com.app.imagerandom.domain.model.RequestTokenResponse
 import com.app.imagerandom.domain.model.ValidateRequestTokenRequest
 import com.app.imagerandom.domain.model.ValidateRequestTokenResponse
@@ -28,9 +27,5 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun createSessionToken(requestToken: String): CreateSessionResponse {
         val request = CreateSessionRequest(requestToken = requestToken)
         return apiService.createSession(request)
-    }
-
-    override suspend fun getMovieGenreList(): GenreListResponse {
-        return apiService.getMovieGenres()
     }
 }

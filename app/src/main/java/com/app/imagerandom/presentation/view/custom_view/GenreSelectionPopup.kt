@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.app.imagerandom.common.GenreList
 import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.presentation.ui.AppColors
 
@@ -29,6 +28,7 @@ import com.app.imagerandom.presentation.ui.AppColors
 fun GenreSelectionPopup(
     showPopup: Boolean,
     selectedGenre: Genre?,
+    genreList: List<Genre>,
     onDismiss: () -> Unit,
     onCategorySelected: (Genre) -> Unit
 ) {
@@ -71,7 +71,7 @@ fun GenreSelectionPopup(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(GenreList.genreList) { genre ->
+                items(genreList) { genre ->
                     Text(
                         text = genre.name,
                         color = if (genre == selectedGenre) AppColors.Error else Color.White,
