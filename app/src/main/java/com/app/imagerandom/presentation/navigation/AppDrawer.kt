@@ -71,7 +71,7 @@ fun AppDrawer(
                 label = {
                     Text(
                         "Đăng xuất",
-                        color = AppColors.Error
+                        color = AppColors.TextPrimary
                     )
                 },
                 selected = false,
@@ -81,14 +81,14 @@ fun AppDrawer(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.ic_sign_out),
                         contentDescription = "Sign Out",
-                        tint = AppColors.Error
+                        tint = AppColors.TextPrimary
                     )
                 },
                 modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
                 colors = NavigationDrawerItemDefaults.colors(
                     unselectedContainerColor = AppColors.Primary,
-                    unselectedTextColor = AppColors.Error,
-                    unselectedIconColor = AppColors.Error
+                    unselectedTextColor = AppColors.TextPrimary,
+                    unselectedIconColor = AppColors.TextPrimary
                 )
             )
         }
