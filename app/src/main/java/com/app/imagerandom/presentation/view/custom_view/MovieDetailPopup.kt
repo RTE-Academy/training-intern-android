@@ -69,6 +69,7 @@ fun MovieDetailPopup(
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     val posterUrl = movie.backdropPath?.let {
                         NetworkConstants.IMAGE_BASE_URL + it
                     }
