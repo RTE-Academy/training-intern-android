@@ -6,8 +6,12 @@ import javax.inject.Inject
 
 class CategoriesRepositoryImpl @Inject constructor(
     private val apiService: MovieApiService
-): CategoriesRepository {
-    override suspend fun getMovieListByGenres(language: String, page: Int, genres: Int): GetMovieListResponse {
+) : CategoriesRepository {
+    override suspend fun getMovieListByGenres(
+        language: String,
+        page: Int,
+        genres: Int
+    ): GetMovieListResponse {
         return apiService.getMovieListByGenres(language, page, genres)
     }
 }

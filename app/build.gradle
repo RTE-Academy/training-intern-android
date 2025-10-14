@@ -205,7 +205,6 @@ dependencies {
 
     //Accompanist
     implementation libs.accompanist.permissions
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.5-beta")
 
     implementation(libs.androidx.core.testing)
     androidTestImplementation libs.mockk

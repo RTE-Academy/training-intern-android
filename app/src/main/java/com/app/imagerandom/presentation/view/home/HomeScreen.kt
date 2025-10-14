@@ -39,7 +39,6 @@ import com.app.imagerandom.presentation.view.auth.navigateToSignIn
 import com.app.imagerandom.presentation.view.categories.navigateToCategories
 import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.viewmodel.HomeViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -77,17 +76,9 @@ fun HomeScreen(
     loadMoreMovies: () -> Unit
 ) {
     val gridState = rememberLazyGridState()
-    val systemUiController = rememberSystemUiController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
-    LaunchedEffect(Unit) {
-        // Hide status bar and navigation bar
-        systemUiController.isStatusBarVisible = false
-        systemUiController.isNavigationBarVisible = false
-        systemUiController.isSystemBarsVisible = false
-    }
 
     // Auto sign in
     LaunchedEffect(isAutoSignIn) {
@@ -176,7 +167,8 @@ fun HomeScreen(
                                 .weight(1f)
                                 .clickable {
                                     navController.navigateToCategories(
-                                        genresList.getOrNull(17)?.id ?: 10768)
+                                        genresList.getOrNull(17)?.id ?: 10768
+                                    )
                                 }
                         ) {
                             // Create references for the composables to constrain
@@ -226,7 +218,9 @@ fun HomeScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable {
-                                    navController.navigateToCategories(genresList.getOrNull(3)?.id ?: 35)
+                                    navController.navigateToCategories(
+                                        genresList.getOrNull(3)?.id ?: 35
+                                    )
                                 }
                         ) {
                             val (background, image, text) = createRefs()
