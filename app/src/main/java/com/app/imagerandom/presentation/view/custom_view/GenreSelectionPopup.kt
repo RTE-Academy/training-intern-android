@@ -1,5 +1,6 @@
 package com.app.imagerandom.presentation.view.custom_view
 
+import android.R.attr.top
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
