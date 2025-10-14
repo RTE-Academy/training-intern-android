@@ -4,6 +4,8 @@ import com.app.imagerandom.domain.model.CreateSessionRequest
 import com.app.imagerandom.domain.model.CreateSessionResponse
 import com.app.imagerandom.domain.model.GenreListResponse
 import com.app.imagerandom.domain.model.GetMovieListResponse
+import com.app.imagerandom.domain.model.MovieCreditsResponse
+import com.app.imagerandom.domain.model.MovieVideosResponse
 import com.app.imagerandom.domain.model.RequestTokenResponse
 import com.app.imagerandom.domain.model.ValidateRequestTokenRequest
 import com.app.imagerandom.domain.model.ValidateRequestTokenResponse
@@ -50,4 +52,17 @@ interface MovieApiService {
     suspend fun getMovieGenres(
         @Query("language") language: String = "vi-VN"
     ): GenreListResponse
+
+    // Get credit list
+    @GET("movie/{movie_id}/credits")
+    suspend fun getMovieCredits(
+        @retrofit2.http.Path("movie_id") movieId: Int
+    ): MovieCreditsResponse
+
+    // Get trailer
+    @GET("movie/{movie_id}/videos")
+    suspend fun getMovieVideos(
+        @retrofit2.http.Path("movie_id") movieId: Int,
+        @Query("language") language: String = "en-US"
+    ): MovieVideosResponse
 }

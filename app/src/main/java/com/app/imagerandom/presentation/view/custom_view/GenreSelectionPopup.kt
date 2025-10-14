@@ -58,7 +58,7 @@ fun GenreSelectionPopup(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 40.dp, bottom = 75.dp, start = 32.dp, end = 32.dp),
+                    .padding(horizontal = 32.dp, vertical = 40.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
