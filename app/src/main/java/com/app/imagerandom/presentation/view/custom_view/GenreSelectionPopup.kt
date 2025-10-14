@@ -1,5 +1,6 @@
 package com.app.imagerandom.presentation.view.custom_view
 
+import android.R.attr.top
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -57,7 +58,7 @@ fun GenreSelectionPopup(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 32.dp, vertical = 40.dp),
+                    .padding(top = 40.dp, bottom = 75.dp, start = 32.dp, end = 32.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
