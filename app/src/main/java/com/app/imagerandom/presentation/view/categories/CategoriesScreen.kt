@@ -208,11 +208,40 @@ fun CategoriesScreen(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun CategoriesScreenPreview() {
+    val mockItem = MovieItem(
+        id = 1,
+        title = "Inception",
+        overview = "A thief who steals corporate secrets through dream-sharing technology.",
+        posterPath = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
+        backdropPath = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
+        voteAverage = 8.8,
+        releaseDate = "2010-07-16",
+        adult = true,
+        genreIds = emptyList(),
+        originalLanguage = "TODO()",
+        originalTitle = "TODO()",
+        popularity = 1.0,
+        video = false,
+        voteCount = 1
+    )
+
+    val mockMovies = List(30) { index ->
+        mockItem
+    }
+
+    val mockGenres = listOf(
+        Genre(id = 28, name = "Action"),
+        Genre(id = 12, name = "Adventure"),
+        Genre(id = 878, name = "Science Fiction"),
+        Genre(id = 18, name = "Drama"),
+        Genre(id = 35, name = "Comedy")
+    )
+
     CategoriesScreen(
         navController = NavController(LocalContext.current),
         movieListForSlideShow = emptyList(),
-        movieList = emptyList(),
-        genresList = emptyList(),
+        movieList = mockMovies,
+        genresList = mockGenres,
         isLoading = false,
         categories = 35,
         loadMoreMovies = { },
