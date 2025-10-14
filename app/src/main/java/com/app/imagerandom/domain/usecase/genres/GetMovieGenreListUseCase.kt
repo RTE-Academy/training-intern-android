@@ -7,6 +7,5 @@ import javax.inject.Inject
 class GetMovieGenreListUseCase @Inject constructor(
     private val repo: GenreRepository
 ) {
-    // Lay danh sach the loai phim
     fun getAllGenres(): List<Genre> = repo.getAllGenres()
 }

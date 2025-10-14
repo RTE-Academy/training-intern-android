@@ -32,7 +32,6 @@ class CategoriesViewModel @Inject constructor(
 
     private var currentGenres = 10768
     private var currentPage = 1
-    private var totalPages = 10
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -63,7 +62,6 @@ class CategoriesViewModel @Inject constructor(
                     } else {
                         _movies.value = result.results
                         _movieListForSlideShow.value = result.results.take((result.results.size / 3.0).toInt())
-                        totalPages = result.totalPages
                     }
                     currentPage++
                 }

@@ -7,5 +7,6 @@ import javax.inject.Inject
 class HomeUseCase @Inject constructor(
     private val repo: MoviesRepository
 ) {
-    suspend fun getMovieList(language: String, page: Int): GetMovieListResponse = repo.getMovieList(language, page)
+    suspend fun getMovieList(language: String, page: Int): GetMovieListResponse =
+        repo.getMovieList(language, page)
 }

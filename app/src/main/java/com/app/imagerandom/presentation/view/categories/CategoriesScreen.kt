@@ -28,6 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -88,7 +90,7 @@ fun CategoriesScreen(
     isLoading: Boolean,
     categories: Int,
     loadMoreMovies: () -> Unit,
-    onCategoryChanged: (Int) -> Unit,
+    onCategoryChanged: (Int) -> Unit
 ) {
     val gridState = rememberLazyGridState()
     var showPopup by remember { mutableStateOf(false) }
@@ -201,4 +203,19 @@ fun CategoriesScreen(
             }
         }
     }
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+fun CategoriesScreenPreview() {
+    CategoriesScreen(
+        navController = NavController(LocalContext.current),
+        movieListForSlideShow = emptyList(),
+        movieList = emptyList(),
+        genresList = emptyList(),
+        isLoading = false,
+        categories = 35,
+        loadMoreMovies = { },
+        onCategoryChanged = { }
+    )
 }

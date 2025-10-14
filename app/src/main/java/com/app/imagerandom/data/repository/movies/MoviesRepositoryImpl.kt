@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class MoviesRepositoryImpl @Inject constructor(
     private val apiService: MovieApiService
-): MoviesRepository {
+) : MoviesRepository {
     override suspend fun getMovieList(language: String, page: Int): GetMovieListResponse {
         return apiService.getMovieList(language, page)
     }

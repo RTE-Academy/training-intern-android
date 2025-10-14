@@ -37,6 +37,9 @@ fun GenreSelectionPopup(
     Popup(
         alignment = Alignment.Center,
         properties = PopupProperties(
+            focusable = true,
+            dismissOnClickOutside = false,
+            dismissOnBackPress = true,
             usePlatformDefaultWidth = false
         )
     ) {
@@ -44,49 +47,53 @@ fun GenreSelectionPopup(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black.copy(alpha = 0.8f))
-                .blur(10.dp)
-                .clickable { onDismiss() }
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 40.dp),
-            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(
-                onClick = { onDismiss() },
+            Box(
                 modifier = Modifier
-                    .align(Alignment.End)
-                    .background(Color.White.copy(alpha = 0.2f), CircleShape)
-                    .size(40.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
-                    tint = Color.White
-                )
-            }
+                    .matchParentSize()
+                    .clickable { onDismiss() }
+            )
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp, vertical = 40.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                items(genreList) { genre ->
-                    Text(
-                        text = genre.name,
-                        color = if (genre == selectedGenre) AppColors.Error else Color.White,
-                        fontSize = 20.sp,
-                        fontWeight = if (genre == selectedGenre) FontWeight.Bold else FontWeight.Normal,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                onCategorySelected(genre)
-                                onDismiss()
-                            }
-                            .padding(vertical = 6.dp)
+                IconButton(
+                    onClick = { onDismiss() },
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .background(Color.White.copy(alpha = 0.2f), CircleShape)
+                        .size(40.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close",
+                        tint = Color.White
                     )
                 }
 
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(genreList) { genre ->
+                        Text(
+                            text = genre.name,
+                            color = if (genre == selectedGenre) AppColors.Error else Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = if (genre == selectedGenre) FontWeight.Bold else FontWeight.Normal,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onCategorySelected(genre)
+                                    onDismiss()
+                                }
+                                .padding(vertical = 6.dp)
+                        )
+                    }
+                }
             }
         }
     }

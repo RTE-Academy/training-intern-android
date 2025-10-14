@@ -7,5 +7,9 @@ import javax.inject.Inject
 class GetMovieListByGenresUseCase @Inject constructor(
     private val repo: CategoriesRepository
 ) {
-    suspend fun getMovieListByGenres(language: String, page: Int, genres: Int): GetMovieListResponse = repo.getMovieListByGenres(language, page, genres)
+    suspend fun getMovieListByGenres(
+        language: String,
+        page: Int,
+        genres: Int
+    ): GetMovieListResponse = repo.getMovieListByGenres(language, page, genres)
 }

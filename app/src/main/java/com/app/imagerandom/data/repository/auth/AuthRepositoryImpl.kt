@@ -15,7 +15,11 @@ class AuthRepositoryImpl @Inject constructor(
         return apiService.getRequestToken()
     }
 
-    override suspend fun validateRequestToken(username: String, password: String, requestToken: String): ValidateRequestTokenResponse {
+    override suspend fun validateRequestToken(
+        username: String,
+        password: String,
+        requestToken: String
+    ): ValidateRequestTokenResponse {
         val request = ValidateRequestTokenRequest(
             username = username,
             password = password,
