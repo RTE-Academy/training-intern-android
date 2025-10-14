@@ -28,6 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -35,12 +37,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.app.imagerandom.domain.model.Genre
+import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.custom_view.AutoSlidingBanner
 import com.app.imagerandom.presentation.view.custom_view.CategoryHeader
 import com.app.imagerandom.presentation.view.custom_view.GenreSelectionPopup
+import com.app.imagerandom.presentation.view.custom_view.MovieDetailPopup
+import com.app.imagerandom.presentation.view.custom_view.MovieTrailerDialog
 import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.view.home.navigateToHome
 import com.app.imagerandom.presentation.viewmodel.CategoriesViewModel
@@ -62,6 +67,8 @@ fun NavGraphBuilder.categoriesScreen(navController: NavController) {
         val movieList by viewModel.movies.collectAsState()
         val genresList by viewModel.genres.collectAsState()
         val isLoading by viewModel.isLoading.collectAsState()
+        val credit by viewModel.credit.collectAsState()
+        val trailerKey by viewModel.trailerKey.collectAsState()
         val categories = it.arguments?.getInt("categories") ?: 10768
         LaunchedEffect(Unit) { viewModel.loadMoviesByGenres(genres = categories) }
         CategoriesScreen(
@@ -71,10 +78,15 @@ fun NavGraphBuilder.categoriesScreen(navController: NavController) {
             genresList = genresList,
             isLoading = isLoading,
             categories = categories,
+            creditOfSelectedMovie = credit,
+            trailerKey = trailerKey,
             loadMoreMovies = { viewModel.loadMoviesByGenres(isLoadMore = true) },
             onCategoryChanged = { newGenre ->
                 viewModel.loadMoviesByGenres(genres = newGenre)
-            }
+            },
+            loadCreditOfMovie = viewModel::getCreditOfAnMovie,
+            loadTrailerId = viewModel::loadTrailer,
+            clearTrailerKey = viewModel::clearTrailerKey
         )
     }
 }
@@ -88,11 +100,20 @@ fun CategoriesScreen(
     isLoading: Boolean,
     categories: Int,
     loadMoreMovies: () -> Unit,
+    creditOfSelectedMovie: MovieCreditsResponse?,
+    trailerKey: String?,
     onCategoryChanged: (Int) -> Unit,
+    loadCreditOfMovie: (Int) -> Unit,
+    loadTrailerId: (Int) -> Unit,
+    clearTrailerKey: () -> Unit
 ) {
     val gridState = rememberLazyGridState()
     var showPopup by remember { mutableStateOf(false) }
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
+    // Var to save selected movie for movie detail
+    var selectedMovie by remember { mutableStateOf<MovieItem?>(null) }
+    // Var to decide show trailer
+    var showTrailer by remember { mutableStateOf(false) }
 
     LaunchedEffect(genresList) {
         if (selectedGenre == null && genresList.isNotEmpty()) {
@@ -110,6 +131,12 @@ fun CategoriesScreen(
                     loadMoreMovies()
                 }
             }
+    }
+
+    LaunchedEffect(trailerKey) {
+        if (trailerKey != null) {
+            showTrailer = true
+        }
     }
 
     GenreSelectionPopup(
@@ -152,7 +179,11 @@ fun CategoriesScreen(
                 ) {
                     AutoSlidingBanner(
                         movies = movieListForSlideShow,
-                        pagerState = pagerState
+                        pagerState = pagerState,
+                        onClickItem = { movie, id ->
+                            selectedMovie = movie
+                            loadCreditOfMovie(id)
+                        }
                     )
                 }
             }
@@ -185,9 +216,13 @@ fun CategoriesScreen(
                 ) {
                     items(movieList.size) { index ->
                         val movie = movieList[index]
-                        MoviesItemCard(movie = movie) {
-                            // TODO: Navigate to movie detail
-                        }
+                        MoviesItemCard(
+                            movie = movie,
+                            {
+                                selectedMovie = movie
+                                loadCreditOfMovie(movie.id)
+                            },
+                        )
                     }
                 }
             } else if (!isLoading) {
@@ -200,5 +235,77 @@ fun CategoriesScreen(
                 )
             }
         }
+
+        // Movie detail popup
+        if (selectedMovie != null) {
+            MovieDetailPopup(
+                movie = selectedMovie!!,
+                creditOfMovie = creditOfSelectedMovie,
+                onPlayTrailer = {
+                    loadTrailerId(selectedMovie!!.id)
+                },
+                onDismiss = { selectedMovie = null },
+            )
+        }
+
+        // Trailer popup
+        if (showTrailer && trailerKey != null) {
+            MovieTrailerDialog(
+                videoKey = trailerKey,
+                onDismiss = {
+                    showTrailer = false
+                    clearTrailerKey()
+                }
+            )
+        }
     }
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+fun CategoriesScreenPreview() {
+    val mockItem = MovieItem(
+        id = 1,
+        title = "Inception",
+        overview = "A thief who steals corporate secrets through dream-sharing technology.",
+        posterPath = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
+        backdropPath = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
+        voteAverage = 8.8,
+        releaseDate = "2010-07-16",
+        adult = true,
+        genreIds = emptyList(),
+        originalLanguage = "TODO()",
+        originalTitle = "TODO()",
+        popularity = 1.0,
+        video = false,
+        voteCount = 1
+    )
+
+    val mockMovies = List(30) { index ->
+        mockItem
+    }
+
+    val mockGenres = listOf(
+        Genre(id = 28, name = "Action"),
+        Genre(id = 12, name = "Adventure"),
+        Genre(id = 878, name = "Science Fiction"),
+        Genre(id = 18, name = "Drama"),
+        Genre(id = 35, name = "Comedy")
+    )
+
+    CategoriesScreen(
+        navController = NavController(LocalContext.current),
+        movieListForSlideShow = emptyList(),
+        movieList = mockMovies,
+        genresList = mockGenres,
+        isLoading = false,
+        categories = 35,
+        trailerKey = "",
+        loadMoreMovies = { },
+        creditOfSelectedMovie = null,
+        onCategoryChanged = { },
+        loadCreditOfMovie = { },
+        loadTrailerId = { },
+        clearTrailerKey = { }
+    )
 }

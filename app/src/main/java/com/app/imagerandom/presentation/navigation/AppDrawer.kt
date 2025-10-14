@@ -25,66 +25,72 @@ fun AppDrawer(
         drawerContainerColor = AppColors.Primary,
         drawerContentColor = AppColors.TextPrimary
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 16.dp)
+        ) {
+            drawerItems.forEach { item ->
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            item.title,
+                            color = if (selectedRoute == item.route) AppColors.Primary else AppColors.TextPrimary
+                        )
+                    },
+                    selected = selectedRoute == item.route,
+                    onClick = { onNavigate(item.route) },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(item.icon),
+                            contentDescription = item.title,
+                            tint = if (selectedRoute == item.route) AppColors.Primary else AppColors.TextPrimary
+                        )
+                    },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                    colors = NavigationDrawerItemDefaults.colors(
+                        selectedContainerColor = AppColors.TextPrimary,
+                        unselectedContainerColor = AppColors.Primary,
+                        selectedTextColor = AppColors.Primary,
+                        unselectedTextColor = AppColors.TextPrimary,
+                        selectedIconColor = AppColors.Primary,
+                        unselectedIconColor = AppColors.TextSecondary
+                    )
+                )
+            }
 
-        drawerItems.forEach { item ->
+            Spacer(modifier = Modifier.weight(1f))
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = AppColors.BorderUnfocused
+            )
+
             NavigationDrawerItem(
                 label = {
                     Text(
-                        item.title,
-                        color = if (selectedRoute == item.route) AppColors.Primary else AppColors.TextPrimary
+                        "Đăng xuất",
+                        color = AppColors.Error
                     )
                 },
-                selected = selectedRoute == item.route,
-                onClick = { onNavigate(item.route) },
+                selected = false,
+                onClick = { onLogout() },
                 icon = {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        painter = painterResource(item.icon),
-                        contentDescription = item.title,
-                        tint = if (selectedRoute == item.route) AppColors.Primary else AppColors.TextPrimary
+                        painter = painterResource(R.drawable.ic_sign_out),
+                        contentDescription = "Sign Out",
+                        tint = AppColors.Error
                     )
                 },
                 modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
                 colors = NavigationDrawerItemDefaults.colors(
-                    selectedContainerColor = AppColors.TextPrimary,
                     unselectedContainerColor = AppColors.Primary,
-                    selectedTextColor = AppColors.Primary,
-                    unselectedTextColor = AppColors.TextPrimary,
-                    selectedIconColor = AppColors.Primary,
-                    unselectedIconColor = AppColors.TextSecondary
+                    unselectedTextColor = AppColors.Error,
+                    unselectedIconColor = AppColors.Error
                 )
             )
         }
-
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            color = AppColors.BorderUnfocused
-        )
-
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    "Đăng xuất",
-                    color = AppColors.Error
-                )
-            },
-            selected = false,
-            onClick = { onLogout() },
-            icon = {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(R.drawable.ic_sign_out),
-                    contentDescription = "Sign Out",
-                    tint = AppColors.Error
-                )
-            },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-            colors = NavigationDrawerItemDefaults.colors(
-                unselectedContainerColor = AppColors.Primary,
-                unselectedTextColor = AppColors.Error,
-                unselectedIconColor = AppColors.Error
-            )
-        )
     }
 }

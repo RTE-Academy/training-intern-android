@@ -7,6 +7,6 @@ import javax.inject.Inject
 class FetchMovieGenreListUseCase @Inject constructor(
     private val repo: GenreRepository
 ) {
-    // Fetch danh sach the loai phim
+    // Fetch genres list
     suspend fun fetchMovieGenreList(): GenreListResponse = repo.getMovieGenreList()
 }

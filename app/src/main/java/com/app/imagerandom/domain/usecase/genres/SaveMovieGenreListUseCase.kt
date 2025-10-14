@@ -7,6 +7,5 @@ import javax.inject.Inject
 class SaveMovieGenreListUseCase @Inject constructor(
     private val repo: GenreRepository
 ) {
-    // Luu danh sach the loai phim
     suspend fun saveMovieGenreList(genres: List<Genre>) = repo.saveGenres(genres)
 }

@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.Genre
+import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
@@ -38,8 +39,9 @@ import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.auth.navigateToSignIn
 import com.app.imagerandom.presentation.view.categories.navigateToCategories
 import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
+import com.app.imagerandom.presentation.view.custom_view.MovieDetailPopup
+import com.app.imagerandom.presentation.view.custom_view.MovieTrailerDialog
 import com.app.imagerandom.presentation.viewmodel.HomeViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -54,6 +56,8 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
         val viewModel = hiltViewModel<HomeViewModel>()
         val recentMovieList by viewModel.movies.collectAsState()
         val genresList by viewModel.genres.collectAsState()
+        val credit by viewModel.credit.collectAsState()
+        val trailerKey by viewModel.trailerKey.collectAsState()
         val isLoading by viewModel::isLoading
         HomeScreen(
             navController = navController,
@@ -61,7 +65,12 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
             isLoading = isLoading,
             recentMovieList = recentMovieList,
             genresList = genresList,
-            loadMoreMovies = viewModel::loadMovies
+            creditOfSelectedMovie = credit,
+            trailerKey = trailerKey,
+            loadMoreMovies = viewModel::loadMovies,
+            loadCreditOfMovie = viewModel::getCreditOfAMovie,
+            loadTrailerId = viewModel::loadTrailer,
+            clearTrailerKey = viewModel::clearTrailerKey
         )
     }
 }
@@ -74,20 +83,21 @@ fun HomeScreen(
     isLoading: Boolean,
     recentMovieList: List<MovieItem>,
     genresList: List<Genre>,
-    loadMoreMovies: () -> Unit
+    creditOfSelectedMovie: MovieCreditsResponse?,
+    trailerKey: String?,
+    loadMoreMovies: () -> Unit,
+    loadCreditOfMovie: (Int) -> Unit,
+    loadTrailerId: (Int) -> Unit,
+    clearTrailerKey: () -> Unit
 ) {
     val gridState = rememberLazyGridState()
-    val systemUiController = rememberSystemUiController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
-    LaunchedEffect(Unit) {
-        // Hide status bar and navigation bar
-        systemUiController.isStatusBarVisible = false
-        systemUiController.isNavigationBarVisible = false
-        systemUiController.isSystemBarsVisible = false
-    }
+    // Var to save selected movie for movie detail
+    var selectedMovie by remember { mutableStateOf<MovieItem?>(null) }
+    // Var to decide show trailer
+    var showTrailer by remember { mutableStateOf(false) }
 
     // Auto sign in
     LaunchedEffect(isAutoSignIn) {
@@ -107,6 +117,13 @@ fun HomeScreen(
                 }
             }
     }
+
+    LaunchedEffect(trailerKey) {
+        if (trailerKey != null) {
+            showTrailer = true
+        }
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -176,7 +193,8 @@ fun HomeScreen(
                                 .weight(1f)
                                 .clickable {
                                     navController.navigateToCategories(
-                                        genresList.getOrNull(17)?.id ?: 10768)
+                                        genresList.getOrNull(17)?.id ?: 10768
+                                    )
                                 }
                         ) {
                             // Create references for the composables to constrain
@@ -226,7 +244,9 @@ fun HomeScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable {
-                                    navController.navigateToCategories(genresList.getOrNull(3)?.id ?: 35)
+                                    navController.navigateToCategories(
+                                        genresList.getOrNull(3)?.id ?: 35
+                                    )
                                 }
                         ) {
                             val (background, image, text) = createRefs()
@@ -312,9 +332,13 @@ fun HomeScreen(
                         ) {
                             items(recentMovieList.size) { index ->
                                 val movie = recentMovieList[index]
-                                MoviesItemCard(movie = movie) {
-                                    // TODO: Navigate to movie detail
-                                }
+                                MoviesItemCard(
+                                    movie = movie,
+                                    onClick = {
+                                        selectedMovie = movie
+                                        loadCreditOfMovie(movie.id)
+                                    }
+                                )
                             }
                         }
                     } else if (!isLoading) {
@@ -326,6 +350,29 @@ fun HomeScreen(
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     }
+                }
+
+                // Movie detail popup
+                selectedMovie?.let {
+                    MovieDetailPopup(
+                        movie = it,
+                        creditOfMovie = creditOfSelectedMovie,
+                        onPlayTrailer = {
+                            loadTrailerId(selectedMovie!!.id)
+                        },
+                        onDismiss = { selectedMovie = null }
+                    )
+                }
+
+                // Trailer popup
+                if (showTrailer && trailerKey != null) {
+                    MovieTrailerDialog(
+                        videoKey = trailerKey,
+                        onDismiss = {
+                            showTrailer = false
+                            clearTrailerKey()
+                        }
+                    )
                 }
             }
         }
@@ -341,7 +388,16 @@ fun HomeScreenPreview() {
         isAutoSignIn = true,
         isLoading = true,
         recentMovieList = sampleMovies,
-        loadMoreMovies = {},
-        genresList = emptyList()
+        genresList = emptyList(),
+        creditOfSelectedMovie = MovieCreditsResponse(
+            id = 1,
+            cast = emptyList(),
+            crew = emptyList()
+        ),
+        trailerKey = "",
+        loadMoreMovies = { },
+        loadCreditOfMovie = { },
+        loadTrailerId = { },
+        clearTrailerKey = { }
     )
 }

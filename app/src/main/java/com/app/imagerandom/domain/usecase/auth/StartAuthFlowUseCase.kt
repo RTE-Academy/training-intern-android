@@ -10,7 +10,7 @@ class StartAuthFlowUseCase @Inject constructor(
         // Get request token
         val requestToken = repo.getRequestToken().requestToken
 
-        // Validate request token với user & pass
+        // Validate request token with user & pass
         val validateResult = repo.validateRequestToken(username, password, requestToken)
         if (!validateResult.isSuccess) {
             throw Exception("Xác thực request token thất bại")
