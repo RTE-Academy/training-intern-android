@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace 'com.app.imagerandom'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.app.imagerandom"
@@ -205,6 +205,9 @@ dependencies {
 
     //Accompanist
     implementation libs.accompanist.permissions
+
+    // Youtube player
+    implementation "com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0"
 
     implementation(libs.androidx.core.testing)
     androidTestImplementation libs.mockk

@@ -1,6 +1,5 @@
 package com.app.imagerandom.presentation.view.custom_view
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -27,7 +26,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun AutoSlidingBanner(
     movies: List<MovieItem>,
-    pagerState: PagerState
+    pagerState: PagerState,
+    onClickItem: (MovieItem, Int) -> Unit
 ) {
     // Auto scroll every 2 seconds
     LaunchedEffect(pagerState) {
@@ -41,7 +41,6 @@ fun AutoSlidingBanner(
             }
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -63,7 +62,7 @@ fun AutoSlidingBanner(
                     .fillMaxWidth()
                     .height(180.dp)
                     .clickable {
-                        Log.d("HomeScreen", "Clicked movie ID: ${movie.id}")
+                        onClickItem(movie, movie.id)
                     },
                 colors = CardDefaults.cardColors(
                     containerColor = AppColors.CardBackground
