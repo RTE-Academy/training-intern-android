@@ -38,9 +38,9 @@ import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.auth.navigateToSignIn
 import com.app.imagerandom.presentation.view.categories.navigateToCategories
-import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.view.custom_view.MovieDetailPopup
 import com.app.imagerandom.presentation.view.custom_view.MovieTrailerDialog
+import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
