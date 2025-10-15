@@ -1,13 +1,13 @@
 package com.app.imagerandom.domain.usecase.movie_detail
 
 import com.app.imagerandom.data.repository.movies.MoviesRepository
-import com.app.imagerandom.domain.model.MovieVideosResponse
+import com.app.imagerandom.domain.model.MovieCreditsResponse
 import javax.inject.Inject
 
-class GetTrailerOfAMovieUseCase @Inject constructor(
+class GetCreditOfMovieUseCase @Inject constructor(
     private val repo: MoviesRepository
 ) {
-    suspend fun getTrailerOfAMovie(
+    suspend fun getCreditOfMovie(
         movieId: Int
-    ): MovieVideosResponse = repo.getMovieVideos(movieId = movieId)
+    ): MovieCreditsResponse = repo.getMovieCredits(movieId = movieId)
 }

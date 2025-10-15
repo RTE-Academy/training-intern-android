@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 fun AutoSlidingBanner(
     movies: List<MovieItem>,
     pagerState: PagerState,
-    onClickItem: (MovieItem, Int) -> Unit
+    onClickItem: (MovieItem) -> Unit
 ) {
     // Auto scroll every 2 seconds
     LaunchedEffect(pagerState) {
@@ -62,7 +62,7 @@ fun AutoSlidingBanner(
                     .fillMaxWidth()
                     .height(180.dp)
                     .clickable {
-                        onClickItem(movie, movie.id)
+                        onClickItem(movie)
                     },
                 colors = CardDefaults.cardColors(
                     containerColor = AppColors.CardBackground

@@ -150,7 +150,7 @@ fun MovieDetailPopup(
                     onClick = onDismiss,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 5.dp)
+                        .padding(top = 5.dp, bottom = 50.dp)
                         .border(
                             width = 2.dp,
                             brush = Brush.linearGradient(
