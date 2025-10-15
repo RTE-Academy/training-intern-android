@@ -10,8 +10,6 @@ import com.app.imagerandom.data.repository.auth.AuthRepository
 import com.app.imagerandom.data.repository.auth.AuthRepositoryImpl
 import com.app.imagerandom.data.repository.categories.CategoriesRepository
 import com.app.imagerandom.data.repository.categories.CategoriesRepositoryImpl
-import com.app.imagerandom.data.repository.credit.CreditRepository
-import com.app.imagerandom.data.repository.credit.CreditRepositoryImpl
 import com.app.imagerandom.data.repository.genre.GenreRepository
 import com.app.imagerandom.data.repository.genre.GenreRepositoryImpl
 import com.app.imagerandom.data.repository.movies.MoviesRepository
@@ -71,11 +69,5 @@ object AppModule {
     @Singleton
     fun provideGenreRepository(dao: GenreDao, api: MovieApiService): GenreRepository {
         return GenreRepositoryImpl(dao = dao, apiService = api)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCreditRepository(api: MovieApiService): CreditRepository {
-        return CreditRepositoryImpl(apiService = api)
     }
 }

@@ -6,10 +6,10 @@ import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieItem
-import com.app.imagerandom.domain.usecase.movie_detail.GetCreditOfAMovieUseCase
+import com.app.imagerandom.domain.usecase.movie_detail.GetCreditOfMovieUseCase
 import com.app.imagerandom.domain.usecase.genres.GetMovieGenreListUseCase
 import com.app.imagerandom.domain.usecase.home.HomeUseCase
-import com.app.imagerandom.domain.usecase.movie_detail.GetTrailerOfAMovieUseCase
+import com.app.imagerandom.domain.usecase.movie_detail.GetTrailerOfMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +23,8 @@ class HomeViewModel @Inject constructor(
     private val sharedPrefHelper: SharedPrefHelper,
     private val homeUseCase: HomeUseCase,
     private val getMovieGenreListUseCase: GetMovieGenreListUseCase,
-    private val getCreditOfAMovieUseCase: GetCreditOfAMovieUseCase,
-    private val getTrailerOfAMovieUseCase: GetTrailerOfAMovieUseCase
+    private val getCreditOfMovieUseCase: GetCreditOfMovieUseCase,
+    private val getTrailerOfMovieUseCase: GetTrailerOfMovieUseCase
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<MovieItem>>(emptyList())
@@ -79,14 +79,14 @@ class HomeViewModel @Inject constructor(
 
     fun getCreditOfAMovie(movieId: Int) {
         viewModelScope.launch {
-            _credit.value = getCreditOfAMovieUseCase.getCreditOfAnMovie(movieId)
+            _credit.value = getCreditOfMovieUseCase.getCreditOfMovie(movieId)
         }
     }
 
     fun loadTrailer(movieId: Int) {
         viewModelScope.launch {
             try {
-                val response = getTrailerOfAMovieUseCase.getTrailerOfAMovie(movieId)
+                val response = getTrailerOfMovieUseCase.getTrailerOfAMovie(movieId)
                 val youtubeVideo = response.results.firstOrNull {
                     it.site.equals("YouTube", true) && it.type.equals("Trailer", true)
                 }

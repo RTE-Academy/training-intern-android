@@ -197,9 +197,9 @@ fun CategoriesScreen(
                     AutoSlidingBanner(
                         movies = movieListForSlideShow,
                         pagerState = pagerState,
-                        onClickItem = { movie, id ->
+                        onClickItem = { movie ->
                             selectedMovie = movie
-                            loadCreditOfMovie(id)
+                            loadCreditOfMovie(movie.id)
                         }
                     )
                 }
