@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
@@ -46,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +58,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.model.MovieSearchResult
@@ -242,7 +246,9 @@ fun SearchScreen(
                             cursorColor = AppColors.Primary,
                             focusedLabelColor = AppColors.Primary,
                             unfocusedLabelColor = Color.Gray
-                        )
+                        ),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = { if (query.isNotEmpty()) onSearch(query) }),
                     )
                 }
 
@@ -364,29 +370,27 @@ fun SearchScreen(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun SearchScreenPreview() {
-    val mockItem = MovieItem(
+    val mockSearchResult = MovieSearchResult(
         id = 1,
         title = "Inception",
         overview = "A thief who steals corporate secrets through dream-sharing technology.",
-        posterPath = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
-        backdropPath = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
-        voteAverage = 8.8,
-        releaseDate = "2010-07-16",
-        adult = true,
-        genreIds = emptyList(),
-        originalLanguage = "TODO()",
-        originalTitle = "TODO()",
-        popularity = 1.0,
-        video = false,
-        voteCount = 1
+        posterUrl = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
+        backdropUrl = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
+        rating = 8.8,
+        mediaType = MediaType.MOVIE
     )
 
-    val mockMovies = List(30) { index ->
-        mockItem
-    }
+    val mockMovies = List(30) { mockSearchResult }
 
-//    SearchScreen(
-//        movieList = Resource<List<MovieSearchResult>>,
-//        loadMoreMovies = { },
-//    )
+    SearchScreen(
+        movieList = Resource.Success(mockMovies),
+        navController = rememberNavController(),
+        creditOfSelectedMovie = null,
+        trailerKey = null,
+        loadMoreMovies = { },
+        loadCreditOfMovie = { },
+        onSearch = { },
+        loadTrailerById = { },
+        clearTrailerKey = { }
+    )
 }
