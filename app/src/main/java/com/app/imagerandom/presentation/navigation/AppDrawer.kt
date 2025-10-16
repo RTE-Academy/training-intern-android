@@ -1,7 +1,16 @@
 package com.app.imagerandom.presentation.navigation
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -16,9 +25,10 @@ fun AppDrawer(
     onLogout: () -> Unit
 ) {
     val drawerItems = listOf(
+        DrawerItem("Tìm kiếm", R.drawable.ic_search, Screen.SEARCH),
         DrawerItem("Phim lẻ", R.drawable.ic_movie, Screen.HOME),
         DrawerItem("Phim bộ", R.drawable.ic_tv, "${Screen.CATEGORIES}?categories=${35}"),
-        DrawerItem("Cài đặt", R.drawable.ic_settings, "settings")
+        DrawerItem("Cài đặt", R.drawable.ic_settings, "${Screen.CATEGORIES}?categories=${10768}")
     )
 
     ModalDrawerSheet(
