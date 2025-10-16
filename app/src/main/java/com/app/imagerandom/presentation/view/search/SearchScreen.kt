@@ -47,6 +47,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -122,6 +124,7 @@ fun SearchScreen(
     var selectedMovie by remember { mutableStateOf<MovieItem?>(null) }
     // Var to decide show trailer
     var showTrailer by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
     // Scroll to load more
     LaunchedEffect(gridState) {
@@ -230,7 +233,10 @@ fun SearchScreen(
                             }
                         },
                         leadingIcon = {
-                            IconButton(onClick = { if (query.isNotEmpty()) onSearch(query) }) {
+                            IconButton(onClick = {
+                                if (query.isNotEmpty()) onSearch(query)
+                                focusManager.clearFocus()
+                            }) {
                                 Icon(
                                     Icons.Default.Search,
                                     contentDescription = "Search",
@@ -248,7 +254,12 @@ fun SearchScreen(
                             unfocusedLabelColor = Color.Gray
                         ),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = { if (query.isNotEmpty()) onSearch(query) }),
+                        keyboardActions = KeyboardActions(onDone = {
+                            if (query.isNotEmpty()) {
+                                onSearch(query)
+                                focusManager.clearFocus()
+                            }
+                        }),
                     )
                 }
 
