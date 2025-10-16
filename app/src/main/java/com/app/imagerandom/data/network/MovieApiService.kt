@@ -6,6 +6,7 @@ import com.app.imagerandom.domain.model.GenreListResponse
 import com.app.imagerandom.domain.model.GetMovieListResponse
 import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieVideosResponse
+import com.app.imagerandom.domain.model.MovieSearchResponse
 import com.app.imagerandom.domain.model.RequestTokenResponse
 import com.app.imagerandom.domain.model.ValidateRequestTokenRequest
 import com.app.imagerandom.domain.model.ValidateRequestTokenResponse
@@ -65,4 +66,12 @@ interface MovieApiService {
         @retrofit2.http.Path("movie_id") movieId: Int,
         @Query("language") language: String = "en-US"
     ): MovieVideosResponse
+
+    // Search movie
+    @GET("search/multi")
+    suspend fun searchMovie(
+        @Query("query") query: String,
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = "vi-VN"
+    ): MovieSearchResponse
 }
