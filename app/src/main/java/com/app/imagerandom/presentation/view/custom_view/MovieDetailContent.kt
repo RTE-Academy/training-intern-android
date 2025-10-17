@@ -20,7 +20,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,7 +51,8 @@ fun MovieDetailContent(
     movie: MovieDetail,
     credits: MovieCreditsResponse?,
     scrollState: ScrollState,
-    onPlayTrailer: (Int) -> Unit
+    onPlayTrailer: (Int) -> Unit,
+    onDismiss: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -109,6 +113,21 @@ fun MovieDetailContent(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .size(64.dp)
+                )
+            }
+            // Back button
+            IconButton(
+                onClick = { onDismiss() },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
+                    .size(40.dp)
+                    .background(AppColors.Primary, CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Back",
+                    tint = AppColors.TextPrimary
                 )
             }
         }
