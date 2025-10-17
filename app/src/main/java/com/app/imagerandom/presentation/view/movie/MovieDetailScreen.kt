@@ -43,7 +43,6 @@ import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.custom_view.MovieDetailContent
 import com.app.imagerandom.presentation.view.custom_view.MovieDetailShimmer
-import com.app.imagerandom.presentation.view.custom_view.MovieTrailerDialog
 import com.app.imagerandom.presentation.viewmodel.MovieDetailViewModel
 
 fun NavController.navigateToMovieDetail(movieId: Int) {
@@ -69,6 +68,7 @@ fun NavGraphBuilder.movieDetailScreen(navController: NavController) {
             movieState = movie,
             credits = credit,
             trailerKey = trailerKey,
+            navController = navController,
             onPlayTrailer = {
                 viewModel.loadTrailer(movieId)
             },
@@ -87,7 +87,8 @@ fun MovieDetailScreen(
     trailerKey: String?,
     onPlayTrailer: (Int) -> Unit,
     onClearTrailerKey: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    navController: NavController
 ) {
     val scrollState = rememberScrollState()
     val gradient = Brush.verticalGradient(
@@ -110,7 +111,6 @@ fun MovieDetailScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 56.dp)
         ) {
             when (movieState) {
                 is Response.Loading -> MovieDetailShimmer()
@@ -124,7 +124,7 @@ fun MovieDetailScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(vertical = 8.dp)
                     ) {
                         MovieDetailContent(
                             movie = data,
@@ -139,13 +139,14 @@ fun MovieDetailScreen(
 
             // Trailer popup
             if (showTrailer && trailerKey != null) {
-                MovieTrailerDialog(
-                    videoKey = trailerKey,
-                    onDismiss = {
-                        showTrailer = false
-                        onClearTrailerKey()
-                    }
-                )
+//                MovieTrailerDialog(
+//                    videoKey = trailerKey,
+//                    onDismiss = {
+//                        showTrailer = false
+//                        onClearTrailerKey()
+//                    }
+//                )
+                navController.navigateToMovieTrailer(trailerKey)
             }
         }
     }
@@ -219,12 +220,13 @@ fun MovieDetailScreenPreview() {
         crew = List(3) { mockCrew }
     )
 
-    MovieDetailScreen(
-        movieState = Response.Success(mockMovie),
-        credits = mockCredits,
-        trailerKey = "",
-        onPlayTrailer = { },
-        onClearTrailerKey = { },
-        onDismiss = { }
-    )
+//    MovieDetailScreen(
+//        movieState = Response.Success(mockMovie),
+//        credits = mockCredits,
+//        trailerKey = "",
+//        onPlayTrailer = { },
+//        onClearTrailerKey = { },
+//        onDismiss = { },
+//        navController = RememberNav
+//    )
 }

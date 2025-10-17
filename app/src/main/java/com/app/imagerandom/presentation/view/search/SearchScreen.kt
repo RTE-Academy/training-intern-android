@@ -288,6 +288,10 @@ fun SearchScreen(
                         } else {
                             val filteredMovies = movies.filter { it.mediaType == mediaType }
 
+                            if (filteredMovies.isEmpty()) {
+                                loadMoreMovies()
+                            }
+
                             LazyVerticalGrid(
                                 state = gridState,
                                 columns = GridCells.Fixed(3),
