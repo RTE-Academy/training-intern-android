@@ -15,13 +15,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,6 +36,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -49,8 +56,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,7 +72,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.Genre
-import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
@@ -71,8 +79,9 @@ import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.auth.navigateToSignIn
 import com.app.imagerandom.presentation.view.categories.navigateToCategories
 import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
-import com.app.imagerandom.presentation.view.custom_view.MovieDetailPopup
 import com.app.imagerandom.presentation.view.custom_view.MovieTrailerDialog
+import com.app.imagerandom.presentation.view.movie.navigateToMovieDetail
+import com.app.imagerandom.presentation.view.search.navigateToSearch
 import com.app.imagerandom.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -88,8 +97,6 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
         val viewModel = hiltViewModel<HomeViewModel>()
         val recentMovieList by viewModel.movies.collectAsState()
         val genresList by viewModel.genres.collectAsState()
-        val credit by viewModel.credit.collectAsState()
-        val trailerKey by viewModel.trailerKey.collectAsState()
         val isLoading by viewModel::isLoading
         HomeScreen(
             navController = navController,
@@ -97,12 +104,7 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
             isLoading = isLoading,
             recentMovieList = recentMovieList,
             genresList = genresList,
-            creditOfSelectedMovie = credit,
-            trailerKey = trailerKey,
             loadMoreMovies = viewModel::loadMovies,
-            loadCreditOfMovie = viewModel::getCreditOfAMovie,
-            loadTrailerId = viewModel::loadTrailer,
-            clearTrailerKey = viewModel::clearTrailerKey
         )
     }
 }
@@ -115,21 +117,12 @@ fun HomeScreen(
     isLoading: Boolean,
     recentMovieList: List<MovieItem>,
     genresList: List<Genre>,
-    creditOfSelectedMovie: MovieCreditsResponse?,
-    trailerKey: String?,
     loadMoreMovies: () -> Unit,
-    loadCreditOfMovie: (Int) -> Unit,
-    loadTrailerId: (Int) -> Unit,
-    clearTrailerKey: () -> Unit
 ) {
     val gridState = rememberLazyGridState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    // Var to save selected movie for movie detail
-    var selectedMovie by remember { mutableStateOf<MovieItem?>(null) }
-    // Var to decide show trailer
-    var showTrailer by remember { mutableStateOf(false) }
 
     // Auto sign in
     LaunchedEffect(isAutoSignIn) {
@@ -148,12 +141,6 @@ fun HomeScreen(
                     loadMoreMovies()
                 }
             }
-    }
-
-    LaunchedEffect(trailerKey) {
-        if (trailerKey != null) {
-            showTrailer = true
-        }
     }
 
     ModalNavigationDrawer(
@@ -179,18 +166,91 @@ fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
+                var showSearchField by remember { mutableStateOf(false) }
+                var showIconSearch by remember { mutableStateOf(true) }
+                var searchQuery by remember { mutableStateOf("") }
+                val focusManager = LocalFocusManager.current
                 TopAppBar(
                     title = {
-                        Text(
-                            text = "Khám Phá Phim Hot Nhất",
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 28.sp,
-                                color = AppColors.TextPrimary
-                            ),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        if (showSearchField) {
+                            showIconSearch = false
+                            TextField(
+                                value = searchQuery,
+                                onValueChange = { searchQuery = it },
+                                singleLine = true,
+                                placeholder = { Text("Tìm kiếm phim...") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(AppColors.Primary, RoundedCornerShape(12.dp)),
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.White,
+                                    unfocusedContainerColor = Color.White,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    cursorColor = AppColors.Primary,
+                                    focusedTextColor = AppColors.Primary,
+                                    unfocusedTextColor = AppColors.Primary
+                                ),
+                                trailingIcon = {
+                                    IconButton(onClick = {
+                                        searchQuery = ""
+                                        showIconSearch = true
+                                        showSearchField = false
+                                    }) {
+                                        Icon(
+                                            Icons.Default.Close,
+                                            contentDescription = "Clear",
+                                            tint = AppColors.Primary
+                                        )
+                                    }
+                                },
+                                leadingIcon = {
+                                    IconButton(onClick = {
+                                        if (searchQuery.isNotEmpty()) navController.navigateToSearch(searchQuery)
+                                        focusManager.clearFocus()
+                                    }) {
+                                        Icon(
+                                            Icons.Default.Search,
+                                            contentDescription = "Search",
+                                            tint = AppColors.Primary
+                                        )
+                                    }
+                                },
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardActions = KeyboardActions(onSearch = {
+                                    if (searchQuery.isNotEmpty()) {
+                                        navController.navigateToSearch(searchQuery)
+                                        showSearchField = false
+                                        searchQuery = ""
+                                        showIconSearch = true
+                                        focusManager.clearFocus()
+                                    }
+                                })
+                            )
+                        } else {
+                            Text(
+                                text = "Phim hot nhất",
+                                style = MaterialTheme.typography.headlineLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 28.sp,
+                                    color = AppColors.TextPrimary
+                                ),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    },
+                    actions = {
+                        if (showIconSearch) {
+                            IconButton(onClick = { showSearchField = !showSearchField }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_search),
+                                    modifier = Modifier.size(25.dp),
+                                    contentDescription = "Search",
+                                    tint = AppColors.TextPrimary
+                                )
+                            }
+                        }
                     },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
@@ -367,8 +427,9 @@ fun HomeScreen(
                                 MoviesItemCard(
                                     movie = movie,
                                     onClick = {
-                                        selectedMovie = movie
-                                        loadCreditOfMovie(movie.id)
+//                                        selectedMovie = movie
+//                                        loadCreditOfMovie(movie.id)
+                                        navController.navigateToMovieDetail(movie.id)
                                     }
                                 )
                             }
@@ -382,29 +443,6 @@ fun HomeScreen(
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     }
-                }
-
-                // Movie detail popup
-                selectedMovie?.let {
-                    MovieDetailPopup(
-                        movie = it,
-                        creditOfMovie = creditOfSelectedMovie,
-                        onPlayTrailer = {
-                            loadTrailerId(selectedMovie!!.id)
-                        },
-                        onDismiss = { selectedMovie = null }
-                    )
-                }
-
-                // Trailer popup
-                if (showTrailer && trailerKey != null) {
-                    MovieTrailerDialog(
-                        videoKey = trailerKey,
-                        onDismiss = {
-                            showTrailer = false
-                            clearTrailerKey()
-                        }
-                    )
                 }
             }
         }
@@ -421,15 +459,6 @@ fun HomeScreenPreview() {
         isLoading = true,
         recentMovieList = sampleMovies,
         genresList = emptyList(),
-        creditOfSelectedMovie = MovieCreditsResponse(
-            id = 1,
-            cast = emptyList(),
-            crew = emptyList()
-        ),
-        trailerKey = "",
-        loadMoreMovies = { },
-        loadCreditOfMovie = { },
-        loadTrailerId = { },
-        clearTrailerKey = { }
+        loadMoreMovies = { }
     )
 }

@@ -60,7 +60,10 @@ fun NavGraphBuilder.signInScreen(navController: NavController) {
             preFillPassword = password,
             onSignIn = { usernameInput, passwordInput ->
                 viewModel.startAuthFlow(usernameInput, passwordInput) {
-                    navController.navigateToHome()
+                    navController.navigate(Screen.HOME) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             },
             navigateToSignUp = {

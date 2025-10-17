@@ -209,6 +209,9 @@ dependencies {
     // Youtube player
     implementation libs.youtubeplayer.core
 
+    // Shimmer
+    implementation(libs.compose.shimmer)
+
     implementation(libs.androidx.core.testing)
     androidTestImplementation libs.mockk
     androidTestImplementation libs.androidx.navigation.testing

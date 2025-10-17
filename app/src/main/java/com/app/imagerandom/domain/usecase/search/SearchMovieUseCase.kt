@@ -4,8 +4,8 @@ import com.app.imagerandom.data.repository.search.SearchRepository
 import javax.inject.Inject
 
 class SearchMovieUseCase @Inject constructor(
-    private val repository: SearchRepository
+    private val repo: SearchRepository
 ) {
     suspend fun searchMovie(query: String, page: Int) =
-        repository.searchMovie(query, page)
+        repo.searchMovie(query, page)
 }

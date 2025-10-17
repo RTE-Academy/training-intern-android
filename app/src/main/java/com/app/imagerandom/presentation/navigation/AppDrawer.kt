@@ -25,7 +25,6 @@ fun AppDrawer(
     onLogout: () -> Unit
 ) {
     val drawerItems = listOf(
-        DrawerItem("Tìm kiếm", R.drawable.ic_search, Screen.SEARCH),
         DrawerItem("Phim lẻ", R.drawable.ic_movie, Screen.HOME),
         DrawerItem("Phim bộ", R.drawable.ic_tv, "${Screen.CATEGORIES}?categories=${35}"),
         DrawerItem("Cài đặt", R.drawable.ic_settings, "${Screen.CATEGORIES}?categories=${10768}")

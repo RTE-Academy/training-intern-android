@@ -19,9 +19,9 @@ import com.app.imagerandom.presentation.ui.AppColors
 @Composable
 fun SearchTabs(
     modifier: Modifier = Modifier,
+    selectedTabIndex: Int,
     onTabSelected: (index: Int) -> Unit
 ) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("Phim lẻ", "Phim bộ", "Diễn viên")
 
     TabRow(
@@ -43,7 +43,6 @@ fun SearchTabs(
             Tab(
                 selected = selectedTabIndex == index,
                 onClick = {
-                    selectedTabIndex = index
                     onTabSelected(index)
                 },
                 text = {

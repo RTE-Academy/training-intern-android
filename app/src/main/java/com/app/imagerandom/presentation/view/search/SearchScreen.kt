@@ -48,7 +48,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -58,44 +57,54 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.app.imagerandom.domain.model.MovieCreditsResponse
+import androidx.navigation.navArgument
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.model.MovieSearchResult
+import com.app.imagerandom.domain.model.Response
 import com.app.imagerandom.domain.util.MediaType
 import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.auth.navigateToSignIn
-import com.app.imagerandom.presentation.view.custom_view.MovieDetailPopup
-import com.app.imagerandom.presentation.view.custom_view.MovieTrailerDialog
 import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.view.custom_view.SearchTabs
 import com.app.imagerandom.presentation.viewmodel.SearchViewModel
-import com.app.imagerandom.util.Resource
+import com.app.imagerandom.presentation.view.home.navigateToHome
+import com.app.imagerandom.presentation.view.movie.navigateToMovieDetail
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
+fun NavController.navigateToSearch(query: String) {
+    navigate(Screen.SEARCH + "/$query")
+}
+
 fun NavGraphBuilder.searchScreen(navController: NavController) {
     composable(
-        route = Screen.SEARCH,
-    ) {
+        route = Screen.SEARCH + "/{query}",
+        arguments = listOf(navArgument("query") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val query = backStackEntry.arguments?.getString("query") ?: ""
         val viewModel = hiltViewModel<SearchViewModel>()
         val searchResult by viewModel.searchResults.collectAsState()
-        val credit by viewModel.credit.collectAsState()
-        val trailerKey by viewModel.trailerKey.collectAsState()
+        val currentQuery by viewModel.currentQuery.collectAsState()
+
+        LaunchedEffect(Unit) {
+            viewModel.onUpdateQuery(query)
+            viewModel.searchMovies(true)
+        }
+
         SearchScreen(
-            movieList = searchResult,
             navController = navController,
-            trailerKey = trailerKey,
-            creditOfSelectedMovie = credit,
+            movieList = searchResult,
+            query = currentQuery,
             loadMoreMovies = viewModel::loadNextPage,
-            onSearch = viewModel::searchMovies,
-            loadCreditOfMovie = viewModel::getCreditOfAMovie,
-            loadTrailerById = viewModel::loadTrailer,
-            clearTrailerKey = viewModel::clearTrailerKey
+            onSearch = { viewModel.searchMovies(true) },
+            onUpdateQuery = viewModel::onUpdateQuery,
+            onClear = viewModel::onClearQuery
         )
     }
 }
@@ -103,27 +112,20 @@ fun NavGraphBuilder.searchScreen(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    movieList: Resource<List<MovieSearchResult>>,
     navController: NavController,
-    creditOfSelectedMovie: MovieCreditsResponse?,
-    trailerKey: String?,
+    movieList: Response<List<MovieSearchResult>>,
+    query: String,
     loadMoreMovies: () -> Unit,
-    loadCreditOfMovie: (Int) -> Unit,
-    onSearch: (String) -> Unit,
-    loadTrailerById: (Int) -> Unit,
-    clearTrailerKey: () -> Unit
+    onSearch: () -> Unit,
+    onUpdateQuery: (String) -> Unit,
+    onClear: () -> Unit
 ) {
     val gridState = rememberLazyGridState()
-    var query by remember { mutableStateOf("") }
     var mediaType by remember { mutableStateOf(MediaType.MOVIE) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val scope = rememberCoroutineScope()
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    // Var to save selected movie for movie detail
-    var selectedMovie by remember { mutableStateOf<MovieItem?>(null) }
-    // Var to decide show trailer
-    var showTrailer by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
     // Scroll to load more
@@ -143,12 +145,6 @@ fun SearchScreen(
         gridState.scrollToItem(0)
     }
 
-    LaunchedEffect(trailerKey) {
-        if (trailerKey != null) {
-            showTrailer = true
-        }
-    }
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -157,10 +153,7 @@ fun SearchScreen(
                 onNavigate = { route ->
                     scope.launch { drawerState.close() }
                     if (route != currentRoute) {
-                        navController.navigate(route) {
-                            popUpTo(Screen.HOME) { inclusive = false }
-                            launchSingleTop = true
-                        }
+                        navController.navigateToHome()
                     }
                 },
                 onLogout = {
@@ -215,26 +208,25 @@ fun SearchScreen(
                 ) {
                     TextField(
                         value = query,
-                        onValueChange = { query = it },
+                        onValueChange = { onUpdateQuery(it) },
                         singleLine = true,
                         placeholder = { Text("Tìm kiếm") },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp),
                         trailingIcon = {
                             IconButton(onClick = {
-                                query = ""
-                                onSearch("A")
+                                onClear()
                             }) {
                                 Icon(
                                     Icons.Default.Close,
-                                    contentDescription = "Search",
+                                    contentDescription = "Clear",
                                     tint = AppColors.Primary
                                 )
                             }
                         },
                         leadingIcon = {
                             IconButton(onClick = {
-                                if (query.isNotEmpty()) onSearch(query)
+                                if (query.isNotEmpty()) onSearch()
                                 focusManager.clearFocus()
                             }) {
                                 Icon(
@@ -256,14 +248,15 @@ fun SearchScreen(
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(onDone = {
                             if (query.isNotEmpty()) {
-                                onSearch(query)
+                                onSearch()
                                 focusManager.clearFocus()
                             }
-                        }),
+                        })
                     )
                 }
 
                 SearchTabs(
+                    selectedTabIndex = selectedTabIndex,
                     onTabSelected = { index ->
                         selectedTabIndex = index
                         when (index) {
@@ -275,7 +268,7 @@ fun SearchScreen(
                 )
 
                 when (movieList) {
-                    is Resource.Loading -> {
+                    is Response.Loading -> {
                         LinearProgressIndicator(
                             modifier = Modifier
                                 .fillMaxWidth(),
@@ -284,7 +277,7 @@ fun SearchScreen(
                         )
                     }
 
-                    is Resource.Success -> {
+                    is Response.Success -> {
                         val movies = movieList.data ?: emptyList()
                         if (movies.isEmpty()) {
                             Box(
@@ -331,9 +324,8 @@ fun SearchScreen(
                                     }
 
                                     MoviesItemCard(movie = movieItem) {
-                                        selectedMovie = movieItem
                                         if (movie.mediaType == MediaType.MOVIE) {
-                                            loadCreditOfMovie(movieItem.id)
+                                            navController.navigateToMovieDetail(movieItem.id)
                                         }
                                     }
                                 }
@@ -341,7 +333,7 @@ fun SearchScreen(
                         }
                     }
 
-                    is Resource.Error -> {
+                    is Response.Error -> {
                         Text(
                             text = "Lỗi: ${movieList.message ?: "Không xác định"}",
                             style = MaterialTheme.typography.bodyLarge,
@@ -349,30 +341,6 @@ fun SearchScreen(
                         )
                     }
                 }
-
-                // Movie detail popup
-                selectedMovie?.let {
-                    MovieDetailPopup(
-                        movie = it,
-                        creditOfMovie = creditOfSelectedMovie,
-                        onPlayTrailer = {
-                            loadTrailerById(selectedMovie!!.id)
-                        },
-                        onDismiss = { selectedMovie = null }
-                    )
-                }
-
-                // Trailer popup
-                if (showTrailer && trailerKey != null) {
-                    MovieTrailerDialog(
-                        videoKey = trailerKey,
-                        onDismiss = {
-                            showTrailer = false
-                            clearTrailerKey()
-                        }
-                    )
-                }
-
             }
         }
     }
@@ -388,20 +356,19 @@ fun SearchScreenPreview() {
         posterUrl = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
         backdropUrl = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
         rating = 8.8,
-        mediaType = MediaType.MOVIE
+        mediaType = MediaType.MOVIE,
+        totalPage = 5
     )
 
     val mockMovies = List(30) { mockSearchResult }
 
     SearchScreen(
-        movieList = Resource.Success(mockMovies),
+        movieList = Response.Success(mockMovies),
         navController = rememberNavController(),
-        creditOfSelectedMovie = null,
-        trailerKey = null,
         loadMoreMovies = { },
-        loadCreditOfMovie = { },
+        query = "",
         onSearch = { },
-        loadTrailerById = { },
-        clearTrailerKey = { }
+        onUpdateQuery = { },
+        onClear = { }
     )
 }

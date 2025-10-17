@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.domain.model.Genre
-import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.usecase.movie_detail.GetCreditOfMovieUseCase
 import com.app.imagerandom.domain.usecase.genres.GetMovieGenreListUseCase
@@ -32,12 +31,6 @@ class HomeViewModel @Inject constructor(
 
     private val _genres = MutableStateFlow<List<Genre>>(emptyList())
     val genres: StateFlow<List<Genre>> = _genres.asStateFlow()
-
-    private val _credit = MutableStateFlow<MovieCreditsResponse?>(null)
-    val credit: StateFlow<MovieCreditsResponse?> = _credit.asStateFlow()
-
-    private val _trailerKey = MutableStateFlow<String?>(null)
-    val trailerKey = _trailerKey.asStateFlow()
 
     private var currentPage = 1
     private var totalPages = Int.MAX_VALUE
@@ -75,30 +68,5 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _genres.value = getMovieGenreListUseCase.getAllGenres()
         }
-    }
-
-    fun getCreditOfAMovie(movieId: Int) {
-        viewModelScope.launch {
-            _credit.value = getCreditOfMovieUseCase.getCreditOfMovie(movieId)
-        }
-    }
-
-    fun loadTrailer(movieId: Int) {
-        viewModelScope.launch {
-            try {
-                val response = getTrailerOfMovieUseCase.getTrailerOfAMovie(movieId)
-                val youtubeVideo = response.results.firstOrNull {
-                    it.site.equals("YouTube", true) && it.type.equals("Trailer", true)
-                }
-                _trailerKey.value = youtubeVideo?.key
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _trailerKey.value = null
-            }
-        }
-    }
-
-    fun clearTrailerKey() {
-        _trailerKey.value = null
     }
 }
