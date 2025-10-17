@@ -5,6 +5,7 @@ import com.app.imagerandom.domain.model.CreateSessionResponse
 import com.app.imagerandom.domain.model.GenreListResponse
 import com.app.imagerandom.domain.model.GetMovieListResponse
 import com.app.imagerandom.domain.model.MovieCreditsResponse
+import com.app.imagerandom.domain.model.MovieDetail
 import com.app.imagerandom.domain.model.MovieVideosResponse
 import com.app.imagerandom.domain.model.MovieSearchResponse
 import com.app.imagerandom.domain.model.RequestTokenResponse
@@ -13,6 +14,7 @@ import com.app.imagerandom.domain.model.ValidateRequestTokenResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MovieApiService {
@@ -48,6 +50,14 @@ interface MovieApiService {
         @Query("with_genres") genreId: Int? = null
     ): GetMovieListResponse
 
+    // Get movie detail
+    @GET("movie/{movie_id}")
+    suspend fun getMovieDetail(
+        @Path("movie_id") movieId: Int,
+        @Query("language") language: String = "vi-VN",
+        @Query("append_to_response") appendToResponse: String = "credits,videos"
+    ): MovieDetail
+
     // Get genre list
     @GET("genre/movie/list")
     suspend fun getMovieGenres(
@@ -57,13 +67,13 @@ interface MovieApiService {
     // Get credit list
     @GET("movie/{movie_id}/credits")
     suspend fun getMovieCredits(
-        @retrofit2.http.Path("movie_id") movieId: Int
+        @Path("movie_id") movieId: Int
     ): MovieCreditsResponse
 
     // Get trailer
     @GET("movie/{movie_id}/videos")
     suspend fun getMovieVideos(
-        @retrofit2.http.Path("movie_id") movieId: Int,
+        @Path("movie_id") movieId: Int,
         @Query("language") language: String = "en-US"
     ): MovieVideosResponse
 

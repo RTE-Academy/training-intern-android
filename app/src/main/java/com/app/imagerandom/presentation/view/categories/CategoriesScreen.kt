@@ -40,17 +40,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.app.imagerandom.domain.model.Genre
-import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.custom_view.AutoSlidingBanner
 import com.app.imagerandom.presentation.view.custom_view.CategoryHeader
 import com.app.imagerandom.presentation.view.custom_view.GenreSelectionPopup
-import com.app.imagerandom.presentation.view.custom_view.MovieDetailPopup
-import com.app.imagerandom.presentation.view.custom_view.MovieTrailerDialog
 import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
 import com.app.imagerandom.presentation.view.home.navigateToHome
+import com.app.imagerandom.presentation.view.movie.navigateToMovieDetail
 import com.app.imagerandom.presentation.viewmodel.CategoriesViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -70,8 +68,6 @@ fun NavGraphBuilder.categoriesScreen(navController: NavController) {
         val movieList by viewModel.movies.collectAsState()
         val genresList by viewModel.genres.collectAsState()
         val isLoading by viewModel.isLoading.collectAsState()
-        val credit by viewModel.credit.collectAsState()
-        val trailerKey by viewModel.trailerKey.collectAsState()
         val categories = it.arguments?.getInt("categories") ?: 10768
         LaunchedEffect(Unit) { viewModel.loadMoviesByGenres(genres = categories) }
         CategoriesScreen(
@@ -81,15 +77,10 @@ fun NavGraphBuilder.categoriesScreen(navController: NavController) {
             genresList = genresList,
             isLoading = isLoading,
             categories = categories,
-            creditOfSelectedMovie = credit,
-            trailerKey = trailerKey,
             loadMoreMovies = { viewModel.loadMoviesByGenres(isLoadMore = true) },
             onCategoryChanged = { newGenre ->
                 viewModel.loadMoviesByGenres(genres = newGenre)
-            },
-            loadCreditOfMovie = viewModel::getCreditOfAnMovie,
-            loadTrailerId = viewModel::loadTrailer,
-            clearTrailerKey = viewModel::clearTrailerKey
+            }
         )
     }
 }
@@ -104,18 +95,11 @@ fun CategoriesScreen(
     isLoading: Boolean,
     categories: Int,
     loadMoreMovies: () -> Unit,
-    creditOfSelectedMovie: MovieCreditsResponse?,
-    trailerKey: String?,
-    onCategoryChanged: (Int) -> Unit,
-    loadCreditOfMovie: (Int) -> Unit,
-    loadTrailerId: (Int) -> Unit,
-    clearTrailerKey: () -> Unit
+    onCategoryChanged: (Int) -> Unit
 ) {
     val gridState = rememberLazyGridState()
     var showPopup by remember { mutableStateOf(false) }
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
-    // Var to save selected movie for movie detail
-    var selectedMovie by remember { mutableStateOf<MovieItem?>(null) }
     // Var to decide show trailer
     var showTrailer by remember { mutableStateOf(false) }
 
@@ -135,12 +119,6 @@ fun CategoriesScreen(
                     loadMoreMovies()
                 }
             }
-    }
-
-    LaunchedEffect(trailerKey) {
-        if (trailerKey != null) {
-            showTrailer = true
-        }
     }
 
     GenreSelectionPopup(
@@ -190,8 +168,7 @@ fun CategoriesScreen(
                         movies = movieListForSlideShow,
                         pagerState = pagerState,
                         onClickItem = { movie ->
-                            selectedMovie = movie
-                            loadCreditOfMovie(movie.id)
+                            navController.navigateToMovieDetail(movie.id)
                         }
                     )
                 }
@@ -228,8 +205,7 @@ fun CategoriesScreen(
                         MoviesItemCard(
                             movie = movie,
                             {
-                                selectedMovie = movie
-                                loadCreditOfMovie(movie.id)
+                                navController.navigateToMovieDetail(movie.id)
                             },
                         )
                     }
@@ -243,29 +219,6 @@ fun CategoriesScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
-        }
-
-        // Movie detail popup
-        if (selectedMovie != null) {
-            MovieDetailPopup(
-                movie = selectedMovie!!,
-                creditOfMovie = creditOfSelectedMovie,
-                onPlayTrailer = {
-                    loadTrailerId(selectedMovie!!.id)
-                },
-                onDismiss = { selectedMovie = null },
-            )
-        }
-
-        // Trailer popup
-        if (showTrailer && trailerKey != null) {
-            MovieTrailerDialog(
-                videoKey = trailerKey,
-                onDismiss = {
-                    showTrailer = false
-                    clearTrailerKey()
-                }
-            )
         }
     }
 }
@@ -309,12 +262,7 @@ fun CategoriesScreenPreview() {
         genresList = mockGenres,
         isLoading = false,
         categories = 35,
-        trailerKey = "",
         loadMoreMovies = { },
-        creditOfSelectedMovie = null,
-        onCategoryChanged = { },
-        loadCreditOfMovie = { },
-        loadTrailerId = { },
-        clearTrailerKey = { }
+        onCategoryChanged = { }
     )
 }

@@ -11,4 +11,7 @@ object AppColors {
     val TextSecondary = Color(0xFF757575)
     val Error = Color(0xFFD32F2F)
     val BorderUnfocused = Color(0xFFB0BEC5)
+    val Accent = Color(0xFFE50914)
+    val OverlayDark = Color(0xAA000000)
+    val ShimmerDark = Color(0x11FFFFFF)
 }

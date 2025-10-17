@@ -35,12 +35,6 @@ class CategoriesViewModel @Inject constructor(
     private val _genres = MutableStateFlow<List<Genre>>(emptyList())
     val genres: StateFlow<List<Genre>> = _genres.asStateFlow()
 
-    private val _credit = MutableStateFlow<MovieCreditsResponse?>(null)
-    val credit: StateFlow<MovieCreditsResponse?> = _credit.asStateFlow()
-
-    private val _trailerKey = MutableStateFlow<String?>(null)
-    val trailerKey = _trailerKey.asStateFlow()
-
     private var currentGenres = 10768
     private var currentPage = 1
     private val _isLoading = MutableStateFlow(false)
@@ -87,30 +81,5 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _genres.value = getMovieGenreListUseCase.getAllGenres()
         }
-    }
-
-    fun getCreditOfAnMovie(movieId: Int) {
-        viewModelScope.launch {
-            _credit.value = getCreditOfMovieUseCase.getCreditOfMovie(movieId)
-        }
-    }
-
-    fun loadTrailer(movieId: Int) {
-        viewModelScope.launch {
-            try {
-                val response = getTrailerOfMovieUseCase.getTrailerOfAMovie(movieId)
-                val youtubeVideo = response.results.firstOrNull {
-                    it.site.equals("YouTube", true) && it.type.equals("Trailer", true)
-                }
-                _trailerKey.value = youtubeVideo?.key
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _trailerKey.value = null
-            }
-        }
-    }
-
-    fun clearTrailerKey() {
-        _trailerKey.value = null
     }
 }
