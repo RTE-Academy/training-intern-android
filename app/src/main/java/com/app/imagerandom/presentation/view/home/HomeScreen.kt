@@ -166,90 +166,27 @@ fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
-                var showSearchField by remember { mutableStateOf(false) }
-                var showIconSearch by remember { mutableStateOf(true) }
-                var searchQuery by remember { mutableStateOf("") }
-                val focusManager = LocalFocusManager.current
                 TopAppBar(
                     title = {
-                        if (showSearchField) {
-                            showIconSearch = false
-                            TextField(
-                                value = searchQuery,
-                                onValueChange = { searchQuery = it },
-                                singleLine = true,
-                                placeholder = { Text("Tìm kiếm phim...") },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(AppColors.Primary, RoundedCornerShape(12.dp)),
-                                colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = Color.White,
-                                    unfocusedContainerColor = Color.White,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent,
-                                    cursorColor = AppColors.Primary,
-                                    focusedTextColor = AppColors.Primary,
-                                    unfocusedTextColor = AppColors.Primary
-                                ),
-                                trailingIcon = {
-                                    IconButton(onClick = {
-                                        searchQuery = ""
-                                        showIconSearch = true
-                                        showSearchField = false
-                                    }) {
-                                        Icon(
-                                            Icons.Default.Close,
-                                            contentDescription = "Clear",
-                                            tint = AppColors.Primary
-                                        )
-                                    }
-                                },
-                                leadingIcon = {
-                                    IconButton(onClick = {
-                                        if (searchQuery.isNotEmpty()) navController.navigateToSearch(searchQuery)
-                                        focusManager.clearFocus()
-                                    }) {
-                                        Icon(
-                                            Icons.Default.Search,
-                                            contentDescription = "Search",
-                                            tint = AppColors.Primary
-                                        )
-                                    }
-                                },
-                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                                keyboardActions = KeyboardActions(onSearch = {
-                                    if (searchQuery.isNotEmpty()) {
-                                        navController.navigateToSearch(searchQuery)
-                                        showSearchField = false
-                                        searchQuery = ""
-                                        showIconSearch = true
-                                        focusManager.clearFocus()
-                                    }
-                                })
-                            )
-                        } else {
-                            Text(
-                                text = "Phim hot nhất",
-                                style = MaterialTheme.typography.headlineLarge.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 28.sp,
-                                    color = AppColors.TextPrimary
-                                ),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
+                        Text(
+                            text = "Phim hot nhất",
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 28.sp,
+                                color = AppColors.TextPrimary
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     },
                     actions = {
-                        if (showIconSearch) {
-                            IconButton(onClick = { showSearchField = !showSearchField }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_search),
-                                    modifier = Modifier.size(25.dp),
-                                    contentDescription = "Search",
-                                    tint = AppColors.TextPrimary
-                                )
-                            }
+                        IconButton(onClick = { navController.navigateToSearch() }) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_search),
+                                modifier = Modifier.size(25.dp),
+                                contentDescription = "Search",
+                                tint = AppColors.TextPrimary
+                            )
                         }
                     },
                     navigationIcon = {
