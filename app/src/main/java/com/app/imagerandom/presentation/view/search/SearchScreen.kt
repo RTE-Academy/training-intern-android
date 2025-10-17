@@ -78,24 +78,17 @@ import com.app.imagerandom.presentation.view.movie.navigateToMovieDetail
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-fun NavController.navigateToSearch(query: String) {
-    navigate(Screen.SEARCH + "/$query")
+fun NavController.navigateToSearch() {
+    navigate(Screen.SEARCH)
 }
 
 fun NavGraphBuilder.searchScreen(navController: NavController) {
     composable(
-        route = Screen.SEARCH + "/{query}",
-        arguments = listOf(navArgument("query") { type = NavType.StringType })
+        route = Screen.SEARCH
     ) { backStackEntry ->
-        val query = backStackEntry.arguments?.getString("query") ?: ""
         val viewModel = hiltViewModel<SearchViewModel>()
         val searchResult by viewModel.searchResults.collectAsState()
         val currentQuery by viewModel.currentQuery.collectAsState()
-
-        LaunchedEffect(Unit) {
-            viewModel.onUpdateQuery(query)
-            viewModel.searchMovies(true)
-        }
 
         SearchScreen(
             navController = navController,
