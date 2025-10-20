@@ -19,9 +19,15 @@ class MoviesRepositoryImpl @Inject constructor(
         return apiService.getMovieList(language, page)
     }
 
-    override suspend fun getMovieVideos(movieId: Int): MovieVideosResponse {
-        return apiService.getMovieVideos(movieId)
-    }
+    override suspend fun getMovieVideos(movieId: Int): Flow<Response<MovieVideosResponse>> = flow  {
+        emit(Response.Loading())
+        try {
+            val result = apiService.getMovieVideos(movieId)
+            emit(Response.Success(result))
+        } catch (e: Exception) {
+            emit(Response.Error(e.message ?: "Hiện không có trailer"))
+        }
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun getMovieCredits(movieId: Int): MovieCreditsResponse {
         return apiService.getMovieCredits(movieId)

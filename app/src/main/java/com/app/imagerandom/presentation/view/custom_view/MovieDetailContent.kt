@@ -44,6 +44,7 @@ import com.app.imagerandom.common.NetworkConstants
 import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieDetail
 import com.app.imagerandom.presentation.ui.AppColors
+import java.util.Locale
 import kotlin.text.ifEmpty
 
 @Composable
@@ -148,7 +149,7 @@ fun MovieDetailContent(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "📅 ${movie.releaseDate ?: "Không rõ"}  ⭐ ${String.format("%.1f", movie.voteAverage)}",
+                text = "📅 ${movie.releaseDate ?: "Không rõ"}  ⭐ ${String.format(Locale.US, "%.1f", movie.voteAverage)}",
                 color = AppColors.TextSecondary,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center
@@ -260,7 +261,7 @@ private fun CastItem(
             color = AppColors.TextPrimary,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
-            maxLines = 2,
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
         if (character != null) {
@@ -307,7 +308,7 @@ private fun CrewItem(
             color = AppColors.TextPrimary,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
-            maxLines = 2,
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
         if (job != null) {
