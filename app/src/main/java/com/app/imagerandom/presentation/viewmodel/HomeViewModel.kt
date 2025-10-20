@@ -21,9 +21,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val sharedPrefHelper: SharedPrefHelper,
     private val homeUseCase: HomeUseCase,
-    private val getMovieGenreListUseCase: GetMovieGenreListUseCase,
-    private val getCreditOfMovieUseCase: GetCreditOfMovieUseCase,
-    private val getTrailerOfMovieUseCase: GetTrailerOfMovieUseCase
+    private val getMovieGenreListUseCase: GetMovieGenreListUseCase
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<MovieItem>>(emptyList())

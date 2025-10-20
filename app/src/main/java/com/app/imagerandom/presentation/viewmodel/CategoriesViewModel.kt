@@ -20,9 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
     private val getMovieListByGenresUseCase: GetMovieListByGenresUseCase,
-    private val getMovieGenreListUseCase: GetMovieGenreListUseCase,
-    private val getCreditOfMovieUseCase: GetCreditOfMovieUseCase,
-    private val getTrailerOfMovieUseCase: GetTrailerOfMovieUseCase
+    private val getMovieGenreListUseCase: GetMovieGenreListUseCase
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<MovieItem>>(emptyList())

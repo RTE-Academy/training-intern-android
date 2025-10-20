@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -57,11 +58,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.model.MovieSearchResult
 import com.app.imagerandom.domain.model.Response
@@ -161,7 +161,7 @@ fun SearchScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Tìm kiếm",
+                            text = stringResource(R.string.home_screen_title),
                             style = MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
@@ -203,7 +203,7 @@ fun SearchScreen(
                         value = query,
                         onValueChange = { onUpdateQuery(it) },
                         singleLine = true,
-                        placeholder = { Text("Tìm kiếm") },
+                        placeholder = { Text(stringResource(R.string.search_label)) },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp),
                         trailingIcon = {

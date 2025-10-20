@@ -12,14 +12,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -58,7 +56,6 @@ fun NavGraphBuilder.movieDetailScreen(navController: NavController) {
         val viewModel = hiltViewModel<MovieDetailViewModel>()
         val movie by viewModel.movieDetail.collectAsState()
         val credit by viewModel.credit.collectAsState()
-        val trailerKey by viewModel.trailerKey.collectAsState()
 
         LaunchedEffect(Unit) {
             viewModel.loadMovieDetail(movieId)
@@ -67,12 +64,7 @@ fun NavGraphBuilder.movieDetailScreen(navController: NavController) {
         MovieDetailScreen(
             movieState = movie,
             credits = credit,
-            trailerKey = trailerKey,
             navController = navController,
-            onPlayTrailer = {
-                viewModel.loadTrailer(movieId)
-            },
-            onClearTrailerKey = viewModel::clearTrailerKey,
             onDismiss = {
                 navController.popBackStack()
             }
@@ -84,9 +76,6 @@ fun NavGraphBuilder.movieDetailScreen(navController: NavController) {
 fun MovieDetailScreen(
     movieState: Response<MovieDetail>,
     credits: MovieCreditsResponse?,
-    trailerKey: String?,
-    onPlayTrailer: (Int) -> Unit,
-    onClearTrailerKey: () -> Unit,
     onDismiss: () -> Unit,
     navController: NavController
 ) {
@@ -94,59 +83,46 @@ fun MovieDetailScreen(
     val gradient = Brush.verticalGradient(
         colors = listOf(AppColors.Primary, AppColors.Secondary)
     )
-    var showTrailer by remember { mutableStateOf(false) }
 
-    LaunchedEffect(trailerKey) {
-        if (trailerKey != null) {
-            showTrailer = true
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(gradient)
-    ) {
-        // Content
+    Scaffold(
+        containerColor = AppColors.Primary
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
+                .background(gradient)
         ) {
-            when (movieState) {
-                is Response.Loading -> MovieDetailShimmer()
-                is Response.Error -> ErrorState(
-                    message = movieState.message ?: "Lỗi không xác định"
-                ) { }
+            // Content
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                when (movieState) {
+                    is Response.Loading -> MovieDetailShimmer()
+                    is Response.Error -> ErrorState(
+                        message = movieState.message ?: "Lỗi không xác định"
+                    ) { }
 
-                is Response.Success -> {
-                    val data = movieState.data ?: MovieDetail()
+                    is Response.Success -> {
+                        val data = movieState.data ?: MovieDetail()
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        MovieDetailContent(
-                            movie = data,
-                            credits = credits,
-                            scrollState = scrollState,
-                            onPlayTrailer = onPlayTrailer,
-                            onDismiss = onDismiss
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            MovieDetailContent(
+                                movie = data,
+                                credits = credits,
+                                scrollState = scrollState,
+                                onPlayTrailer = {
+                                    navController.navigateToMovieTrailer(movieId = movieState.data!!.id)
+                                },
+                                onDismiss = onDismiss
+                            )
+                        }
                     }
                 }
-            }
-
-            // Trailer popup
-            if (showTrailer && trailerKey != null) {
-//                MovieTrailerDialog(
-//                    videoKey = trailerKey,
-//                    onDismiss = {
-//                        showTrailer = false
-//                        onClearTrailerKey()
-//                    }
-//                )
-                navController.navigateToMovieTrailer(trailerKey)
             }
         }
     }

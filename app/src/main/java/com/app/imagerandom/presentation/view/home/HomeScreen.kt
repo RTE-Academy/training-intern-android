@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,8 +76,15 @@ import com.app.imagerandom.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-fun NavController.navigateToHome() {
-    navigate(Screen.HOME)
+fun NavController.navigateToHome(
+    clearBackStack: Boolean = false
+) {
+    navigate(Screen.HOME) {
+        if (clearBackStack) {
+            popUpTo(0) { inclusive = true }
+        }
+        launchSingleTop = true
+    }
 }
 
 fun NavGraphBuilder.homeScreen(navController: NavController) {
@@ -158,7 +166,7 @@ fun HomeScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Phim hot nhất",
+                            text = stringResource(R.string.home_screen_title),
                             style = MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
@@ -353,8 +361,6 @@ fun HomeScreen(
                                 MoviesItemCard(
                                     movie = movie,
                                     onClick = {
-//                                        selectedMovie = movie
-//                                        loadCreditOfMovie(movie.id)
                                         navController.navigateToMovieDetail(movie.id)
                                     }
                                 )
