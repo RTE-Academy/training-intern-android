@@ -16,6 +16,8 @@ import com.app.imagerandom.data.repository.movies.MoviesRepository
 import com.app.imagerandom.data.repository.movies.MoviesRepositoryImpl
 import com.app.imagerandom.data.repository.search.SearchRepository
 import com.app.imagerandom.data.repository.search.SearchRepositoryImpl
+import com.app.imagerandom.data.repository.person.PersonRepository
+import com.app.imagerandom.data.repository.person.PersonRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,19 +40,19 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(api: MovieApiService): AuthRepository {
-        return AuthRepositoryImpl(api)
+        return AuthRepositoryImpl(apiService = api)
     }
 
     @Provides
     @Singleton
     fun provideHomeRepository(api: MovieApiService): MoviesRepository {
-        return MoviesRepositoryImpl(api)
+        return MoviesRepositoryImpl(apiService = api)
     }
 
     @Provides
     @Singleton
     fun provideCategoriesRepository(api: MovieApiService): CategoriesRepository {
-        return CategoriesRepositoryImpl(api)
+        return CategoriesRepositoryImpl(apiService = api)
     }
 
     @Provides
@@ -77,5 +79,11 @@ object AppModule {
     @Singleton
     fun provideSearchRepository(api: MovieApiService): SearchRepository {
         return SearchRepositoryImpl(apiService = api)
+    }
+
+    @Provides
+    @Singleton
+    fun providePersonRepository(api: MovieApiService): PersonRepository {
+        return PersonRepositoryImpl(apiService = api)
     }
 }

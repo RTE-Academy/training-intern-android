@@ -2,7 +2,7 @@ package com.app.imagerandom.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.imagerandom.domain.model.MovieSearchResult
+import com.app.imagerandom.domain.model.SearchResult
 import com.app.imagerandom.domain.usecase.search.SearchMovieUseCase
 import com.app.imagerandom.domain.model.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _searchResults =
-        MutableStateFlow<Response<List<MovieSearchResult>>>(Response.Success(emptyList()))
+        MutableStateFlow<Response<List<SearchResult>>>(Response.Success(emptyList()))
     val searchResults = _searchResults.asStateFlow()
 
     private val _currentQuery = MutableStateFlow("")
@@ -54,15 +54,19 @@ class SearchViewModel @Inject constructor(
             searchMovieUseCase.searchMovie(query, currentPage).collect { result ->
                 when (result) {
                     is Response.Success -> {
-                        val oldData = if (reset) emptyList() else (_searchResults.value.dataOrNull() ?: emptyList())
+                        val oldData = if (reset) emptyList() else (_searchResults.value.dataOrNull()
+                            ?: emptyList())
                         val newData = result.data ?: emptyList()
                         _searchResults.value = Response.Success(oldData + newData)
                         currentPage++
                         totalPages = newData.firstOrNull()?.totalPage ?: totalPages
                     }
+
                     is Response.Error -> {
-                        _searchResults.value = Response.Error(result.message ?: "Lỗi không xác định")
+                        _searchResults.value =
+                            Response.Error(result.message ?: "Lỗi không xác định")
                     }
+
                     is Response.Loading -> {
                         if (reset) _searchResults.value = Response.Loading()
                     }

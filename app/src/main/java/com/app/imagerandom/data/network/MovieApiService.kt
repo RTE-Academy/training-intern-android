@@ -7,7 +7,9 @@ import com.app.imagerandom.domain.model.GetMovieListResponse
 import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieDetail
 import com.app.imagerandom.domain.model.MovieVideosResponse
-import com.app.imagerandom.domain.model.MovieSearchResponse
+import com.app.imagerandom.domain.model.SearchResponse
+import com.app.imagerandom.domain.model.PersonDetail
+import com.app.imagerandom.domain.model.PersonResponse
 import com.app.imagerandom.domain.model.RequestTokenResponse
 import com.app.imagerandom.domain.model.ValidateRequestTokenRequest
 import com.app.imagerandom.domain.model.ValidateRequestTokenResponse
@@ -83,5 +85,20 @@ interface MovieApiService {
         @Query("query") query: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = "vi-VN"
-    ): MovieSearchResponse
+    ): SearchResponse
+
+    // Get person
+    @GET("person/popular")
+    suspend fun getPopularPerson(
+        @Query("language") language: String = "vi-VN",
+        @Query("page") page: Int = 1
+    ): PersonResponse
+
+    // Get person detail
+    @GET("person/{person_id}")
+    suspend fun getPersonDetail(
+        @Path("person_id") personId: Int,
+        @Query("language") language: String = "vi-VN",
+        @Query("append_to_response") appendToResponse: String = "movie_credits,tv_credits,images"
+    ): PersonDetail
 }
