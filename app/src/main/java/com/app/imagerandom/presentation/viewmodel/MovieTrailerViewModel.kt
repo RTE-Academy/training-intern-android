@@ -2,7 +2,6 @@ package com.app.imagerandom.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.imagerandom.domain.model.MovieVideosResponse
 import com.app.imagerandom.domain.model.Response
 import com.app.imagerandom.domain.usecase.movie_detail.GetTrailerOfMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,7 +41,8 @@ class MovieTrailerViewModel @Inject constructor(
         }
     }
 
-    fun clearTrailerKey() {
+    override fun onCleared() {
+        super.onCleared()
         _trailerKey.value = Response.Success(null)
     }
 }

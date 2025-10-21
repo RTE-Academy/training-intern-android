@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.app.imagerandom.R
 import com.app.imagerandom.common.NetworkConstants
@@ -52,8 +53,8 @@ fun MovieDetailContent(
     movie: MovieDetail,
     credits: MovieCreditsResponse?,
     scrollState: ScrollState,
-    onPlayTrailer: (Int) -> Unit,
-    onDismiss: () -> Unit
+    navController: NavController,
+    onPlayTrailer: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -118,7 +119,7 @@ fun MovieDetailContent(
             }
             // Back button
             IconButton(
-                onClick = { onDismiss() },
+                onClick = { navController.popBackStack() },
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(16.dp)
@@ -145,21 +146,21 @@ fun MovieDetailContent(
                 color = AppColors.TextPrimary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 28.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Start
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "📅 ${movie.releaseDate ?: "Không rõ"}  ⭐ ${String.format(Locale.US, "%.1f", movie.voteAverage)}",
                 color = AppColors.TextSecondary,
                 fontSize = 16.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Start
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = movie.genres.joinToString { it.name },
                 color = AppColors.TextSecondary,
                 fontSize = 14.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Start
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(

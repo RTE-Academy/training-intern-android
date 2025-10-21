@@ -3,12 +3,9 @@ package com.app.imagerandom.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.imagerandom.domain.model.Genre
-import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.usecase.categories.GetMovieListByGenresUseCase
-import com.app.imagerandom.domain.usecase.movie_detail.GetCreditOfMovieUseCase
 import com.app.imagerandom.domain.usecase.genres.GetMovieGenreListUseCase
-import com.app.imagerandom.domain.usecase.movie_detail.GetTrailerOfMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

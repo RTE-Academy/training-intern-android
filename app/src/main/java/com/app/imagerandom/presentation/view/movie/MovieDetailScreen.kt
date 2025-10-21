@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.app.imagerandom.domain.model.Cast
 import com.app.imagerandom.domain.model.Crew
@@ -64,10 +65,7 @@ fun NavGraphBuilder.movieDetailScreen(navController: NavController) {
         MovieDetailScreen(
             movieState = movie,
             credits = credit,
-            navController = navController,
-            onDismiss = {
-                navController.popBackStack()
-            }
+            navController = navController
         )
     }
 }
@@ -76,7 +74,6 @@ fun NavGraphBuilder.movieDetailScreen(navController: NavController) {
 fun MovieDetailScreen(
     movieState: Response<MovieDetail>,
     credits: MovieCreditsResponse?,
-    onDismiss: () -> Unit,
     navController: NavController
 ) {
     val scrollState = rememberScrollState()
@@ -118,7 +115,7 @@ fun MovieDetailScreen(
                                 onPlayTrailer = {
                                     navController.navigateToMovieTrailer(movieId = movieState.data!!.id)
                                 },
-                                onDismiss = onDismiss
+                                navController = navController
                             )
                         }
                     }
@@ -196,13 +193,9 @@ fun MovieDetailScreenPreview() {
         crew = List(3) { mockCrew }
     )
 
-//    MovieDetailScreen(
-//        movieState = Response.Success(mockMovie),
-//        credits = mockCredits,
-//        trailerKey = "",
-//        onPlayTrailer = { },
-//        onClearTrailerKey = { },
-//        onDismiss = { },
-//        navController = RememberNav
-//    )
+    MovieDetailScreen(
+        movieState = Response.Success(mockMovie),
+        credits = mockCredits,
+        navController = rememberNavController(),
+    )
 }
