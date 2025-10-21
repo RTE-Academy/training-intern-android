@@ -62,19 +62,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.app.imagerandom.R
-import com.app.imagerandom.domain.model.MovieItem
-import com.app.imagerandom.domain.model.MovieSearchResult
+import com.app.imagerandom.domain.model.SearchItem
+import com.app.imagerandom.domain.model.SearchResult
 import com.app.imagerandom.domain.model.Response
 import com.app.imagerandom.domain.util.MediaType
 import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.auth.navigateToSignIn
-import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
+import com.app.imagerandom.presentation.view.custom_view.SearchItemCard
 import com.app.imagerandom.presentation.view.custom_view.SearchTabs
 import com.app.imagerandom.presentation.viewmodel.SearchViewModel
-import com.app.imagerandom.presentation.view.home.navigateToHome
 import com.app.imagerandom.presentation.view.movie.navigateToMovieDetail
+import com.app.imagerandom.presentation.view.person.navigateToPersonDetail
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -92,7 +92,7 @@ fun NavGraphBuilder.searchScreen(navController: NavController) {
 
         SearchScreen(
             navController = navController,
-            movieList = searchResult,
+            searchList = searchResult,
             query = currentQuery,
             loadMoreMovies = viewModel::loadNextPage,
             onSearch = { viewModel.searchMovies(true) },
@@ -106,7 +106,7 @@ fun NavGraphBuilder.searchScreen(navController: NavController) {
 @Composable
 fun SearchScreen(
     navController: NavController,
-    movieList: Response<List<MovieSearchResult>>,
+    searchList: Response<List<SearchResult>>,
     query: String,
     loadMoreMovies: () -> Unit,
     onSearch: () -> Unit,
@@ -145,9 +145,7 @@ fun SearchScreen(
                 selectedRoute = currentRoute,
                 onNavigate = { route ->
                     scope.launch { drawerState.close() }
-                    if (route != currentRoute) {
-                        navController.navigateToHome()
-                    }
+                    navController.navigate(route)
                 },
                 onLogout = {
                     scope.launch { drawerState.close() }
@@ -260,7 +258,7 @@ fun SearchScreen(
                     }
                 )
 
-                when (movieList) {
+                when (searchList) {
                     is Response.Loading -> {
                         LinearProgressIndicator(
                             modifier = Modifier
@@ -271,8 +269,8 @@ fun SearchScreen(
                     }
 
                     is Response.Success -> {
-                        val movies = movieList.data ?: emptyList()
-                        if (movies.isEmpty()) {
+                        val searchResponse = searchList.data ?: emptyList()
+                        if (searchResponse.isEmpty()) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -286,9 +284,9 @@ fun SearchScreen(
                                 )
                             }
                         } else {
-                            val filteredMovies = movies.filter { it.mediaType == mediaType }
+                            val filteredSearchResponse = searchResponse.filter { it.mediaType == mediaType }
 
-                            if (filteredMovies.isEmpty()) {
+                            if (filteredSearchResponse.isEmpty()) {
                                 loadMoreMovies()
                             }
 
@@ -300,29 +298,32 @@ fun SearchScreen(
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                items(filteredMovies) { movie ->
-                                    val movieItem = with(movie) {
-                                        MovieItem(
-                                            adult = true,
-                                            backdropPath = backdropUrl,
-                                            genreIds = emptyList(),
+                                items(filteredSearchResponse) { searchResponse ->
+                                    val searchItem = with(searchResponse) {
+                                        SearchItem(
                                             id = id,
-                                            originalLanguage = "",
-                                            originalTitle = title,
-                                            overview = overview ?: "Không có mô tả.",
-                                            popularity = 0.0,
-                                            posterPath = posterUrl,
-                                            releaseDate = "",
                                             title = title,
-                                            video = false,
-                                            voteAverage = rating,
-                                            voteCount = 0
+                                            name = name,
+                                            overview = overview,
+                                            posterPath = posterUrl,
+                                            backdropPath = backdropUrl,
+                                            profilePath = profilePath
                                         )
                                     }
 
-                                    MoviesItemCard(movie = movieItem) {
-                                        if (movie.mediaType == MediaType.MOVIE) {
-                                            navController.navigateToMovieDetail(movieItem.id)
+                                    SearchItemCard(searchItem = searchItem) {
+                                        when(searchResponse.mediaType) {
+                                            MediaType.MOVIE -> {
+                                                navController.navigateToMovieDetail(searchItem.id)
+                                            }
+
+                                            MediaType.TV -> {
+                                                // TODO: Navigate to TV detail
+                                            }
+
+                                            MediaType.PERSON -> {
+                                                navController.navigateToPersonDetail(searchItem.id)
+                                            }
                                         }
                                     }
                                 }
@@ -332,7 +333,7 @@ fun SearchScreen(
 
                     is Response.Error -> {
                         Text(
-                            text = "Lỗi: ${movieList.message ?: "Không xác định"}",
+                            text = "Lỗi: ${searchList.message ?: "Không xác định"}",
                             style = MaterialTheme.typography.bodyLarge,
                             color = AppColors.Error,
                         )
@@ -346,12 +347,14 @@ fun SearchScreen(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun SearchScreenPreview() {
-    val mockSearchResult = MovieSearchResult(
+    val mockSearchResult = SearchResult(
         id = 1,
         title = "Inception",
+        name = "ABC",
         overview = "A thief who steals corporate secrets through dream-sharing technology.",
         posterUrl = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
         backdropUrl = "/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg",
+        profilePath = "",
         rating = 8.8,
         mediaType = MediaType.MOVIE,
         totalPage = 5
@@ -360,7 +363,7 @@ fun SearchScreenPreview() {
     val mockMovies = List(30) { mockSearchResult }
 
     SearchScreen(
-        movieList = Response.Success(mockMovies),
+        searchList = Response.Success(mockMovies),
         navController = rememberNavController(),
         loadMoreMovies = { },
         query = "",
