@@ -16,7 +16,6 @@ import javax.inject.Inject
 class PersonViewModel @Inject constructor(
     private val getPersonUseCase: GetPersonUseCase
 ) : ViewModel() {
-
     private val _person = MutableStateFlow<Response<PersonResponse>>(Response.Success(PersonResponse(page = 1, results = emptyList(), totalPage = 10)))
     val person = _person.asStateFlow()
 
