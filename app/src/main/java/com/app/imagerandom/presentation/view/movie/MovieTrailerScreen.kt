@@ -8,7 +8,11 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
@@ -65,7 +69,6 @@ fun NavGraphBuilder.trailerScreen(navController: NavController) {
         MovieTrailerScreen(
             trailerKey = trailerKey,
             onDismiss = {
-                viewModel::clearTrailerKey
                 navController.popBackStack()
             }
         )
