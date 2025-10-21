@@ -50,7 +50,8 @@ fun SearchItemCard(searchItem: SearchItem, onClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = searchItem.posterPath?.let { NetworkConstants.IMAGE_BASE_URL + it },
+                model = searchItem.profilePath?.let { NetworkConstants.IMAGE_BASE_URL + it }
+                    ?: searchItem.posterPath?.let { NetworkConstants.IMAGE_BASE_URL + it },
                 contentDescription = searchItem.title,
                 modifier = Modifier
                     .height(120.dp)
