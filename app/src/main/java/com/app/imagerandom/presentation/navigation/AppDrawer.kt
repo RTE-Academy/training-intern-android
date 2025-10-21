@@ -27,7 +27,7 @@ fun AppDrawer(
     val drawerItems = listOf(
         DrawerItem("Phim lẻ", R.drawable.ic_movie, Screen.HOME),
         DrawerItem("Phim bộ", R.drawable.ic_tv, "${Screen.CATEGORIES}?categories=${35}"),
-        DrawerItem("Cài đặt", R.drawable.ic_settings, "${Screen.CATEGORIES}?categories=${10768}")
+        DrawerItem("Diễn viên", R.drawable.ic_person, Screen.PERSON)
     )
 
     ModalDrawerSheet(
