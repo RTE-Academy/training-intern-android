@@ -2,7 +2,7 @@ package com.app.imagerandom.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.imagerandom.domain.model.MovieSearchResult
+import com.app.imagerandom.domain.model.SearchResult
 import com.app.imagerandom.domain.usecase.search.SearchMovieUseCase
 import com.app.imagerandom.domain.model.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _searchResults =
-        MutableStateFlow<Response<List<MovieSearchResult>>>(Response.Success(emptyList()))
+        MutableStateFlow<Response<List<SearchResult>>>(Response.Success(emptyList()))
     val searchResults = _searchResults.asStateFlow()
 
     private val _currentQuery = MutableStateFlow("")
