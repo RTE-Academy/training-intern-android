@@ -45,7 +45,6 @@ import com.app.imagerandom.common.NetworkConstants
 import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieDetail
 import com.app.imagerandom.presentation.ui.AppColors
-import com.app.imagerandom.presentation.view.person.navigateToPersonDetail
 import java.util.Locale
 import kotlin.text.ifEmpty
 
@@ -199,10 +198,7 @@ fun MovieDetailContent(
                     CastItem(
                         profilePath = cast.profilePath,
                         name = cast.name,
-                        character = cast.character,
-                        onOpenPersonDetail = {
-                            navController.navigateToPersonDetail(cast.id)
-                        }
+                        character = cast.character
                     )
                 }
             }
@@ -227,10 +223,7 @@ fun MovieDetailContent(
                     val crew = credits.crew[index]
                     CrewItem(
                         name = crew.name,
-                        job = crew.job,
-                        onOpenPersonDetail = {
-                            navController.navigateToPersonDetail(crew.id)
-                        }
+                        job = crew.job
                     )
                 }
             }
@@ -244,15 +237,11 @@ fun MovieDetailContent(
 private fun CastItem(
     profilePath: String?,
     name: String,
-    character: String?,
-    onOpenPersonDetail: () -> Unit
+    character: String?
 ) {
     Column(
         modifier = Modifier
-            .width(120.dp)
-            .clickable {
-                onOpenPersonDetail()
-            },
+            .width(120.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -292,15 +281,11 @@ private fun CastItem(
 @Composable
 private fun CrewItem(
     name: String,
-    job: String?,
-    onOpenPersonDetail: () -> Unit
+    job: String?
 ) {
     Column(
         modifier = Modifier
-            .width(120.dp)
-            .clickable {
-                onOpenPersonDetail()
-            },
+            .width(120.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
