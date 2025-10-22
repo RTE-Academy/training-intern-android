@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -28,6 +29,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.PersonResponse
 import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
@@ -47,6 +51,8 @@ import com.app.imagerandom.presentation.view.custom_view.PersonItemCard
 import com.app.imagerandom.presentation.view.custom_view.ShimmerPersonGrid
 import com.app.imagerandom.presentation.viewmodel.PersonViewModel
 import com.app.imagerandom.domain.model.Response
+import com.app.imagerandom.domain.util.MediaType
+import com.app.imagerandom.presentation.view.search.navigateToSearch
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -73,7 +79,7 @@ fun PersonScreen(
     navController: NavController,
     personState: StateFlow<Response<PersonResponse>>,
     isLoading: () -> Boolean,
-    loadNextPage: () -> Unit
+    loadNextPage: () -> Unit,
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
@@ -106,7 +112,7 @@ fun PersonScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Diễn viên tiêu biểu",
+                            text = stringResource(R.string.title_popular_actor),
                             style = MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
@@ -115,6 +121,16 @@ fun PersonScreen(
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         )
+                    },
+                    actions = {
+                        IconButton(onClick = { navController.navigateToSearch(MediaType.PERSON) }) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_search),
+                                modifier = Modifier.size(25.dp),
+                                contentDescription = "Search",
+                                tint = AppColors.TextPrimary
+                            )
+                        }
                     },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
@@ -142,7 +158,12 @@ fun PersonScreen(
             ) {
                 when (state) {
                     is Response.Loading -> ShimmerPersonGrid()
-                    is Response.Error -> ErrorMessage((state as Response.Error).message ?: "Đã xảy ra lỗi")
+                    is Response.Error -> ErrorMessage(
+                        (state as Response.Error).message ?: stringResource(
+                            R.string.error_something_went_wrong
+                        )
+                    )
+
                     is Response.Success -> {
                         val data = (state as Response.Success).data
                         val people = data?.results ?: emptyList()

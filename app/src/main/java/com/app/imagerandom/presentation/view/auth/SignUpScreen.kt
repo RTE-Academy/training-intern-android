@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.app.imagerandom.R
 import com.app.imagerandom.data.local.SharedPrefHelper
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
@@ -96,7 +98,7 @@ fun SignUpScreen(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Tạo Tài Khoản Mới ✨",
+                        text = stringResource(R.string.title_create_new_account),
                         style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 28.sp,
@@ -105,7 +107,7 @@ fun SignUpScreen(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "Đăng ký để bắt đầu hành trình của bạn",
+                        text = stringResource(R.string.title_sign_up_to_start),
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontSize = 16.sp,
                             color = AppColors.TextSecondary,
@@ -119,7 +121,7 @@ fun SignUpScreen(
                     OutlinedTextField(
                         value = username,
                         onValueChange = { username = it },
-                        label = { Text("Tên người dùng") },
+                        label = { Text(stringResource(R.string.lable_sign_up_username)) },
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -138,7 +140,7 @@ fun SignUpScreen(
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Mật khẩu") },
+                        label = { Text(stringResource(R.string.lable_sign_up_password)) },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -178,7 +180,8 @@ fun SignUpScreen(
                                 prefs.saveUser(username, password)
                                 navigateToSignIn(username, password)
                             } else {
-                                errorMessage = "Vui lòng nhập đầy đủ tên người dùng và mật khẩu"
+                                errorMessage =
+                                    context.getString(R.string.error_sign_up_empty_username_or_password)
                             }
                         },
                         modifier = Modifier
@@ -191,7 +194,7 @@ fun SignUpScreen(
                         )
                     ) {
                         Text(
-                            text = "Đăng Ký",
+                            text = stringResource(R.string.title_sign_up),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -205,7 +208,7 @@ fun SignUpScreen(
                             navigateToSignIn("", "")
                         }) {
                             Text(
-                                text = "Đăng nhập ngay!",
+                                text = stringResource(R.string.lable_sign_in_in_sign_up),
                                 color = AppColors.Primary,
                                 fontWeight = FontWeight.Bold
                             )

@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,6 +29,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.PersonDetail
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
@@ -37,7 +39,7 @@ import com.app.imagerandom.domain.model.MovieCast
 import com.app.imagerandom.domain.model.MovieCredits
 import com.app.imagerandom.domain.model.TvCast
 import com.app.imagerandom.domain.model.TvCredits
-import com.app.imagerandom.presentation.view.custom_view.ErrorState
+import com.app.imagerandom.presentation.view.custom_view.ErrorStateView
 import com.app.imagerandom.presentation.view.custom_view.PersonDetailContent
 import com.app.imagerandom.presentation.view.custom_view.PersonDetailShimmer
 import com.app.imagerandom.presentation.view.home.navigateToHome
@@ -107,8 +109,8 @@ fun PersonDetailScreen(
 
             when (personState) {
                 is Response.Loading -> PersonDetailShimmer()
-                is Response.Error -> ErrorState(
-                    message = personState.message ?: "Lỗi không xác định", onRetry
+                is Response.Error -> ErrorStateView(
+                    message = personState.message ?: stringResource(R.string.error_unspecified_error), onRetry
                 )
 
                 is Response.Success -> {

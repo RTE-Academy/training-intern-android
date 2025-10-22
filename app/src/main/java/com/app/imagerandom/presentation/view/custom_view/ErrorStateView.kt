@@ -14,15 +14,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.imagerandom.R
 import com.app.imagerandom.presentation.ui.AppColors
 
 @Composable
-fun ErrorState(message: String, onRetry: () -> Unit) {
+fun ErrorStateView(message: String, onRetry: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,8 +60,8 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun ErrorStatePreview() {
-    ErrorState(
-        message = "Đã xảy ra lỗi khi tải dữ liệu!",
+    ErrorStateView(
+        message = stringResource(R.string.error_something_went_wrong),
         onRetry = { }
     )
 }

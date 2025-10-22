@@ -1,8 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Image Random</string>
-    <string name='setting_title'>Setting</string>
-    <string name='home_screen_title' translatable="false">Phim hot nhất</string>
+    <string name="setting_title">Setting</string>
+    <string name="home_screen_title" translatable="false">Phim hot nhất</string>
     <string name="search_label" translatable="false">Tìm kiếm</string>
     <string name="trailer_unavailable" translatable="false">Không có trailer</string>
+    <string name="title_war_movie" translatable="false">Phim Chiến Tranh</string>
+    <string name="title_dramma_movie" translatable="false">Phim Chính Kịch</string>
+    <string name="title_new_movie" translatable="false">Phim Mới Cập Nhật</string>
+    <string name="lable_empty_movie" translatable="false">Không có phim nào để hiển thị</string>
+    <string name="title_sign_in_for_more_movie" translatable="false">Đăng nhập để khám phá những bộ phim đang hot nhất hiện nay!</string>
+    <string name="lable_sign_in_username" translatable="false">Tên người dùng</string>
+    <string name="lable_sign_in_password" translatable="false">Mật khẩu</string>
+    <string name="title_sign_in" translatable="false">Đăng Nhập</string>
+    <string name="lable_sign_up_in_sign_in" translatable="false">Đăng Ký</string>
+    <string name="title_create_new_account" translatable="false">Tạo Tài Khoản Mới ✨</string>
+    <string name="title_sign_up_to_start" translatable="false">Đăng ký để bắt đầu hành trình của bạn</string>
+    <string name="lable_sign_up_username" translatable="false">Tên người dùng</string>
+    <string name="lable_sign_up_password" translatable="false">Mật khẩu</string>
+    <string name="error_sign_up_empty_username_or_password" translatable="false">Vui lòng nhập đầy đủ tên người dùng và mật khẩu</string>
+    <string name="title_sign_up" translatable="false">Đăng Ký</string>
+    <string name="lable_sign_in_in_sign_up" translatable="false">Đăng nhập ngay!</string>
+    <string name="error_unspecified_error" translatable="false">Lỗi không xác định</string>
+    <string name="title_popular_actor" translatable="false">Diễn viên tiêu biểu</string>
+    <string name="error_something_went_wrong" translatable="false">Đã xảy ra lỗi</string>
+    <string name="unknown" translatable="false">Không rõ</string>
+    <string name="title_overview" translatable="false">Tóm tắt</string>
+    <string name="no_summary" translatable="false">Không có tóm tắt.</string>
+    <string name="cast" translatable="false">Diễn viên</string>
+    <string name="crew" translatable="false">Đoàn làm phim</string>
+    <string name="birthday" translatable="false">Ngày sinh</string>
+    <string name="place_of_birth" translatable="false">Nơi sinh</string>
+    <string name="popularity" translatable="false">Phổ biến</string>
+    <string name="biography" translatable="false">Tiểu sử</string>
+    <string name="top_movies" translatable="false">Phim nổi bật</string>
+    <string name="top_tv_series" translatable="false">Chương trình TV nổi bật</string>
+    <string name="movies" translatable="false">Phim lẻ</string>
+    <string name="tv_series" translatable="false">Phim bộ</string>
+    <string name="actors" translatable="false">Diễn viên</string>
+    <string name="sign_out" translatable="false">Đăng xuất</string>
+    <string name="search" translatable="false">Tìm kiếm mọi thứ</string>
 </resources>

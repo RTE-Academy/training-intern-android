@@ -64,6 +64,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
+import com.app.imagerandom.domain.util.MediaType
 import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
@@ -177,7 +178,7 @@ fun HomeScreen(
                         )
                     },
                     actions = {
-                        IconButton(onClick = { navController.navigateToSearch() }) {
+                        IconButton(onClick = { navController.navigateToSearch(MediaType.MOVIE) }) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_search),
                                 modifier = Modifier.size(25.dp),
@@ -257,7 +258,7 @@ fun HomeScreen(
                                         top.linkTo(background.top)
                                         end.linkTo(background.end)
                                     },
-                                text = genresList.getOrNull(17)?.name ?: "Phim Chiến Tranh",
+                                text = genresList.getOrNull(17)?.name ?: stringResource(R.string.title_war_movie),
                                 color = AppColors.TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp
@@ -313,7 +314,7 @@ fun HomeScreen(
                                         top.linkTo(background.top)
                                         start.linkTo(parent.start)
                                     },
-                                text = genresList.getOrNull(3)?.name ?: "Phim Hài",
+                                text = genresList.getOrNull(3)?.name ?: stringResource(R.string.title_dramma_movie),
                                 color = AppColors.TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp
@@ -322,7 +323,7 @@ fun HomeScreen(
                     }
 
                     Text(
-                        text = "Phim Mới Cập Nhật",
+                        text = stringResource(R.string.title_new_movie),
                         style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
@@ -369,7 +370,7 @@ fun HomeScreen(
                     } else if (!isLoading) {
                         // Empty state
                         Text(
-                            text = "Không có phim nào để hiển thị",
+                            text = stringResource(R.string.lable_empty_movie),
                             style = MaterialTheme.typography.bodyLarge,
                             color = AppColors.TextSecondary,
                             modifier = Modifier.align(Alignment.CenterHorizontally)

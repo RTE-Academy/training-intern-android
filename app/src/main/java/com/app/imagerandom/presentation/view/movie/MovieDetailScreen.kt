@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.Cast
 import com.app.imagerandom.domain.model.Crew
 import com.app.imagerandom.domain.model.MovieCreditsResponse
@@ -98,7 +100,7 @@ fun MovieDetailScreen(
                 when (movieState) {
                     is Response.Loading -> MovieDetailShimmer()
                     is Response.Error -> ErrorState(
-                        message = movieState.message ?: "Lỗi không xác định"
+                        message = movieState.message ?: stringResource(R.string.error_unspecified_error)
                     ) { }
 
                     is Response.Success -> {

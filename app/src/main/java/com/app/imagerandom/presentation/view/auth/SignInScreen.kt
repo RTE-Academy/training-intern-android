@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -54,6 +55,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.app.imagerandom.R
 import com.app.imagerandom.presentation.view.home.navigateToHome
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
@@ -160,7 +162,7 @@ fun SignInScreen(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "Đăng nhập để khám phá những bộ phim đang hot nhất hiện nay!",
+                        text = stringResource(R.string.title_sign_in_for_more_movie),
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontSize = 16.sp,
                             color = Color.Gray,
@@ -174,7 +176,7 @@ fun SignInScreen(
                     OutlinedTextField(
                         value = username,
                         onValueChange = { username = it },
-                        label = { Text("Tên người dùng") },
+                        label = { Text(stringResource(R.string.lable_sign_in_username)) },
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -193,7 +195,7 @@ fun SignInScreen(
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Mật khẩu") },
+                        label = { Text(stringResource(R.string.lable_sign_in_password)) },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -239,7 +241,7 @@ fun SignInScreen(
                         )
                     ) {
                         Text(
-                            text = "Đăng Nhập",
+                            text = stringResource(R.string.title_sign_in),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -251,7 +253,7 @@ fun SignInScreen(
                     ) {
                         TextButton(onClick = navigateToSignUp) {
                             Text(
-                                text = "Đăng Ký",
+                                text = stringResource(R.string.lable_sign_up_in_sign_in),
                                 color = AppColors.Primary,
                                 fontWeight = FontWeight.Bold
                             )

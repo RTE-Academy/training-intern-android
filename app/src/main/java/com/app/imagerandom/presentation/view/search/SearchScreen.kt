@@ -61,6 +61,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.SearchItem
 import com.app.imagerandom.domain.model.SearchResult
@@ -78,14 +79,18 @@ import com.app.imagerandom.presentation.view.person.navigateToPersonDetail
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-fun NavController.navigateToSearch() {
-    navigate(Screen.SEARCH)
+fun NavController.navigateToSearch(mediaType: String) {
+    navigate("${Screen.SEARCH}?mediaType=${mediaType}")
 }
 
 fun NavGraphBuilder.searchScreen(navController: NavController) {
     composable(
-        route = Screen.SEARCH
-    ) { backStackEntry ->
+        route = "${Screen.SEARCH}?mediaType={mediaType}",
+        arguments = listOf(
+            navArgument("mediaType") { defaultValue = MediaType.MOVIE }
+        )
+    ) {
+        val mediaType = it.arguments?.getString("mediaType") ?: MediaType.MOVIE
         val viewModel = hiltViewModel<SearchViewModel>()
         val searchResult by viewModel.searchResults.collectAsState()
         val currentQuery by viewModel.currentQuery.collectAsState()
@@ -94,6 +99,7 @@ fun NavGraphBuilder.searchScreen(navController: NavController) {
             navController = navController,
             searchList = searchResult,
             query = currentQuery,
+            mediaTypeInit = mediaType,
             loadMoreMovies = viewModel::loadNextPage,
             onSearch = { viewModel.searchMovies(true) },
             onUpdateQuery = viewModel::onUpdateQuery,
@@ -108,17 +114,27 @@ fun SearchScreen(
     navController: NavController,
     searchList: Response<List<SearchResult>>,
     query: String,
+    mediaTypeInit: String,
     loadMoreMovies: () -> Unit,
     onSearch: () -> Unit,
     onUpdateQuery: (String) -> Unit,
-    onClear: () -> Unit
+    onClear: () -> Unit,
 ) {
     val gridState = rememberLazyGridState()
     var mediaType by remember { mutableStateOf(MediaType.MOVIE) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val scope = rememberCoroutineScope()
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTabIndex by remember {
+        mutableIntStateOf(
+            when (mediaTypeInit) {
+                MediaType.MOVIE -> 0
+                MediaType.TV -> 1
+                MediaType.PERSON -> 2
+                else -> 0
+            }
+        )
+    }
     val focusManager = LocalFocusManager.current
 
     // Scroll to load more
@@ -159,7 +175,7 @@ fun SearchScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = stringResource(R.string.home_screen_title),
+                            text = stringResource(R.string.search),
                             style = MaterialTheme.typography.headlineLarge.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
@@ -278,7 +294,7 @@ fun SearchScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "Không có phim nào để hiển thị",
+                                    text = stringResource(R.string.lable_empty_movie),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = AppColors.TextSecondary
                                 )
@@ -334,7 +350,7 @@ fun SearchScreen(
 
                     is Response.Error -> {
                         Text(
-                            text = "Lỗi: ${searchList.message ?: "Không xác định"}",
+                            text = "Lỗi: ${searchList.message ?: stringResource(R.string.error_unspecified_error)}",
                             style = MaterialTheme.typography.bodyLarge,
                             color = AppColors.Error,
                         )
@@ -364,10 +380,11 @@ fun SearchScreenPreview() {
     val mockMovies = List(30) { mockSearchResult }
 
     SearchScreen(
-        searchList = Response.Success(mockMovies),
         navController = rememberNavController(),
-        loadMoreMovies = { },
+        searchList = Response.Success(mockMovies),
         query = "",
+        mediaTypeInit = MediaType.MOVIE,
+        loadMoreMovies = { },
         onSearch = { },
         onUpdateQuery = { },
         onClear = { }

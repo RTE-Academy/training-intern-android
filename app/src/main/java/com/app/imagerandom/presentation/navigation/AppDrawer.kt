@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.app.imagerandom.R
 import com.app.imagerandom.presentation.ui.AppColors
@@ -25,9 +26,9 @@ fun AppDrawer(
     onLogout: () -> Unit
 ) {
     val drawerItems = listOf(
-        DrawerItem("Phim lẻ", R.drawable.ic_movie, Screen.HOME),
-        DrawerItem("Phim bộ", R.drawable.ic_tv, "${Screen.CATEGORIES}?categories=${35}"),
-        DrawerItem("Diễn viên", R.drawable.ic_person, Screen.PERSON)
+        DrawerItem(stringResource(R.string.movies), R.drawable.ic_movie, Screen.HOME),
+        DrawerItem(stringResource(R.string.tv_series), R.drawable.ic_tv, "${Screen.CATEGORIES}?categories=${35}"),
+        DrawerItem(stringResource(R.string.actors), R.drawable.ic_person, Screen.PERSON)
     )
 
     ModalDrawerSheet(
@@ -79,7 +80,7 @@ fun AppDrawer(
             NavigationDrawerItem(
                 label = {
                     Text(
-                        "Đăng xuất",
+                        stringResource(R.string.sign_out),
                         color = AppColors.TextPrimary
                     )
                 },

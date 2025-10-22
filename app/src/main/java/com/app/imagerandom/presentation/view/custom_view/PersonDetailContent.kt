@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -159,13 +160,13 @@ fun PersonDetailContent(
                 fontSize = 20.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
-            InfoRow("Ngày sinh", person.birthday ?: "Không rõ")
-            InfoRow("Nơi sinh", person.placeOfBirth ?: "Không rõ")
-            InfoRow("Phổ biến", String.format(Locale.US, "%.1f", person.popularity))
+            InfoRow(stringResource(R.string.birthday), person.birthday ?: stringResource(R.string.unknown))
+            InfoRow(stringResource(R.string.place_of_birth), person.placeOfBirth ?: stringResource(R.string.unknown))
+            InfoRow(stringResource(R.string.popularity), String.format(Locale.US, "%.1f", person.popularity))
             if (person.biography.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Tiểu sử",
+                    text = stringResource(R.string.biography),
                     color = AppColors.TextPrimary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp
@@ -184,7 +185,7 @@ fun PersonDetailContent(
         // Top movie
         if (person.movieCredits.cast.isNotEmpty()) {
             Text(
-                text = "Phim nổi bật",
+                text = stringResource(R.string.top_movies),
                 color = AppColors.TextPrimary,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
@@ -213,7 +214,7 @@ fun PersonDetailContent(
         if (person.tvCredits.cast.isNotEmpty()) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Chương trình TV nổi bật",
+                text = stringResource(R.string.top_tv_series),
                 color = AppColors.TextPrimary,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
