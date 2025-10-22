@@ -36,7 +36,7 @@ class PersonViewModel @Inject constructor(
         loadPeople(reset = true)
     }
 
-    fun loadPeople(language: String = "vi-VN", reset: Boolean = false) {
+    private fun loadPeople(language: String = "vi-VN", reset: Boolean = false) {
         if (isLoading) return
         if (reset) {
             currentPage = 1

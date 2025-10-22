@@ -7,7 +7,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.app.imagerandom.R
 import com.app.imagerandom.presentation.ui.AppColors
 
 @Composable
@@ -27,5 +29,5 @@ fun ErrorMessage(message: String) {
 @Preview(showBackground = true)
 @Composable
 fun ErrorMessagePreview() {
-    ErrorMessage(message = "Đã xảy ra lỗi! Vui lòng thử lại.")
+    ErrorMessage(message = stringResource(R.string.error_something_went_wrong))
 }

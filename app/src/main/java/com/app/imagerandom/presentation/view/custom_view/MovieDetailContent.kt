@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -151,7 +152,7 @@ fun MovieDetailContent(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "📅 ${movie.releaseDate ?: "Không rõ"}  ⭐ ${
+                text = "📅 ${movie.releaseDate ?: stringResource(R.string.unknown)}  ⭐ ${
                     String.format(
                         Locale.US,
                         "%.1f",
@@ -171,14 +172,14 @@ fun MovieDetailContent(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Tóm tắt",
+                text = stringResource(R.string.title_overview),
                 color = AppColors.TextPrimary,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = movie.overview.ifEmpty { "Không có tóm tắt." },
+                text = movie.overview.ifEmpty { stringResource(R.string.no_summary) },
                 color = AppColors.TextSecondary,
                 fontSize = 14.sp,
                 lineHeight = 20.sp
@@ -189,7 +190,7 @@ fun MovieDetailContent(
         if (credits?.cast?.isNotEmpty() == true) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Diễn viên",
+                text = stringResource(R.string.cast),
                 color = AppColors.TextPrimary,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
@@ -218,7 +219,7 @@ fun MovieDetailContent(
         if (credits?.crew?.isNotEmpty() == true) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Đoàn làm phim",
+                text = stringResource(R.string.crew),
                 color = AppColors.TextPrimary,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,

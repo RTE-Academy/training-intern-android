@@ -32,6 +32,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.presentation.navigation.Screen
@@ -100,8 +102,6 @@ fun CategoriesScreen(
     val gridState = rememberLazyGridState()
     var showPopup by remember { mutableStateOf(false) }
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
-    // Var to decide show trailer
-    var showTrailer by remember { mutableStateOf(false) }
 
     LaunchedEffect(genresList) {
         if (selectedGenre == null && genresList.isNotEmpty()) {
@@ -136,7 +136,7 @@ fun CategoriesScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    selectedGenre?.let { it ->
+                    selectedGenre?.let {
                         CategoryHeader(
                             selectedGenre = it,
                             onClickShowPopup = { showPopup = true },
@@ -204,7 +204,7 @@ fun CategoriesScreen(
                         val movie = movieList[index]
                         MoviesItemCard(
                             movie = movie,
-                            {
+                            onClick = {
                                 navController.navigateToMovieDetail(movie.id)
                             },
                         )
@@ -213,7 +213,7 @@ fun CategoriesScreen(
             } else if (!isLoading) {
                 // Empty state
                 Text(
-                    text = "Không có phim nào để hiển thị",
+                    text = stringResource(R.string.lable_empty_movie),
                     style = MaterialTheme.typography.bodyLarge,
                     color = AppColors.TextSecondary,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
