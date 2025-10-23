@@ -61,23 +61,15 @@ fun PersonItemCard(person: Person, onClickItem: () -> Unit) {
                 )
         )
 
-        Column(
+        Text(
+            text = person.name,
+            color = AppColors.TextPrimary,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(12.dp)
-        ) {
-            Text(
-                text = person.name,
-                color = AppColors.TextPrimary,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = person.knownForDepartment,
-                color = AppColors.TextSecondary,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+        )
     }
 }

@@ -31,4 +31,15 @@ class PersonRepositoryImpl @Inject constructor(
             emit(Response.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
+
+    override fun searchPerson(query: String, page: Int): Flow<Response<PersonResponse>> =
+        flow {
+            emit(Response.Loading())
+            try {
+                val response = apiService.searchPerson(query, page)
+                emit(Response.Success(response))
+            } catch (e: Exception) {
+                emit(Response.Error(e.localizedMessage ?: "Unexpected error"))
+            }
+        }
 }

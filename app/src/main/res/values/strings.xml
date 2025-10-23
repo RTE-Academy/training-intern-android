@@ -3,7 +3,7 @@
     <string name="app_name" translatable="false">Image Random</string>
     <string name="setting_title">Setting</string>
     <string name="home_screen_title" translatable="false">Phim hot nhất</string>
-    <string name="search_label" translatable="false">Tìm kiếm</string>
+    <string name="search_label" translatable="false">Tìm kiếm...</string>
     <string name="trailer_unavailable" translatable="false">Không có trailer</string>
     <string name="title_war_movie" translatable="false">Phim Chiến Tranh</string>
     <string name="title_dramma_movie" translatable="false">Phim Chính Kịch</string>

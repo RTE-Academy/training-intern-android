@@ -10,7 +10,7 @@ data class PersonResponse(
 
 data class Person(
     @SerializedName("id") val id: Int,
-    @SerializedName("name") val name: String,
+    @SerializedName("name") val name: String = "",
     @SerializedName("profile_path") val profilePath: String?,
     @SerializedName("known_for_department") val knownForDepartment: String = "",
     @SerializedName("popularity") val popularity: Double = 0.0,
