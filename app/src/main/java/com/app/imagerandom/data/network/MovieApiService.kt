@@ -101,4 +101,12 @@ interface MovieApiService {
         @Query("language") language: String = "vi-VN",
         @Query("append_to_response") appendToResponse: String = "movie_credits,tv_credits,images"
     ): PersonDetail
+
+    // Search movie
+    @GET("search/person")
+    suspend fun searchPerson(
+        @Query("query") query: String,
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = "vi-VN"
+    ): PersonResponse
 }
