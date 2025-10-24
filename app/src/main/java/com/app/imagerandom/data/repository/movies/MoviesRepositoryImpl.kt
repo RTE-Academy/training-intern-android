@@ -15,8 +15,20 @@ import javax.inject.Inject
 class MoviesRepositoryImpl @Inject constructor(
     private val apiService: MovieApiService
 ) : MoviesRepository {
-    override suspend fun getMovieList(language: String, page: Int): GetMovieListResponse {
-        return apiService.getMovieList(language, page)
+    override suspend fun getMovieListPopular(language: String, page: Int): GetMovieListResponse {
+        return apiService.getMovieListPopular(language, page)
+    }
+
+    override suspend fun getMovieListNowPlaying(language: String, page: Int): GetMovieListResponse {
+        return apiService.getMovieListNowPlaying(language, page)
+    }
+
+    override suspend fun getMovieListTopRated(language: String, page: Int): GetMovieListResponse {
+        return apiService.getMovieListTopRated(language, page)
+    }
+
+    override suspend fun getMovieListUpcoming(language: String, page: Int): GetMovieListResponse {
+        return apiService.getMovieListUpcoming(language, page)
     }
 
     override suspend fun getMovieVideos(movieId: Int): Flow<Response<MovieVideosResponse>> = flow  {

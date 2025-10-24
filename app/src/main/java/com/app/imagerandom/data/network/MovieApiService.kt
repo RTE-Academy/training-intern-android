@@ -35,9 +35,30 @@ interface MovieApiService {
         @Body body: CreateSessionRequest
     ): CreateSessionResponse
 
-    // Get popular movie list
+    // Get popular movie list popular
     @GET("movie/popular")
-    suspend fun getMovieList(
+    suspend fun getMovieListPopular(
+        @Query("language") language: String = "en-US",
+        @Query("page") page: Int = 1
+    ): GetMovieListResponse
+
+    // Get popular movie list now playing
+    @GET("movie/now_playing")
+    suspend fun getMovieListNowPlaying(
+        @Query("language") language: String = "en-US",
+        @Query("page") page: Int = 1
+    ): GetMovieListResponse
+
+    // Get popular movie list top rated
+    @GET("movie/top_rated")
+    suspend fun getMovieListTopRated(
+        @Query("language") language: String = "en-US",
+        @Query("page") page: Int = 1
+    ): GetMovieListResponse
+
+    // Get popular movie list upcoming
+    @GET("movie/upcoming")
+    suspend fun getMovieListUpcoming(
         @Query("language") language: String = "en-US",
         @Query("page") page: Int = 1
     ): GetMovieListResponse

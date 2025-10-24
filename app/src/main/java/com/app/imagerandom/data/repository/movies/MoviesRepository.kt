@@ -8,7 +8,10 @@ import com.app.imagerandom.domain.model.Response
 import kotlinx.coroutines.flow.Flow
 
 interface MoviesRepository {
-    suspend fun getMovieList(language: String, page: Int): GetMovieListResponse
+    suspend fun getMovieListPopular(language: String, page: Int): GetMovieListResponse
+    suspend fun getMovieListNowPlaying(language: String, page: Int): GetMovieListResponse
+    suspend fun getMovieListTopRated(language: String, page: Int): GetMovieListResponse
+    suspend fun getMovieListUpcoming(language: String, page: Int): GetMovieListResponse
     suspend fun getMovieVideos(movieId: Int): Flow<Response<MovieVideosResponse>>
     suspend fun getMovieCredits(movieId: Int): MovieCreditsResponse
     suspend fun getMovieDetail(movieId: Int): Flow<Response<MovieDetail>>
