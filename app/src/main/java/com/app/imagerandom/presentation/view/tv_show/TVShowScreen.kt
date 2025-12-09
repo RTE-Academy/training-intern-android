@@ -45,6 +45,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.Response
 import com.app.imagerandom.domain.model.TVShow
+import com.app.imagerandom.domain.util.MediaType
 import com.app.imagerandom.domain.util.TvShowType
 import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
@@ -131,7 +132,7 @@ fun TVShowScreen(
                             )
                         },
                         actions = {
-                            IconButton(onClick = { navController.navigateToSearch() }) {
+                            IconButton(onClick = { navController.navigateToSearch(MediaType.TV) }) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_search),
                                     modifier = Modifier.size(25.dp),
