@@ -13,6 +13,8 @@ import com.app.imagerandom.presentation.view.search.searchScreen
 import com.app.imagerandom.presentation.view.tv_show.tvDetailScreen
 import com.app.imagerandom.presentation.view.tv_show.tvShowScreen
 import com.app.imagerandom.presentation.view.tv_show.tvShowSeeMoreScreen
+import com.app.imagerandom.presentation.view.person.personScreen
+import com.app.imagerandom.presentation.view.person.personDetailScreen
 
 object Screen {
     const val SIGN_IN = "sign_in"
@@ -25,6 +27,8 @@ object Screen {
     const val TV_SHOW_DETAIL = "tv_show_detail"
     const val TV_SHOW_SEE_MORE = "tv_show_see_more"
     const val SEARCH = "search"
+    const val PERSON = "person"
+    const val PERSON_DETAIL = "person_detail"
 }
 
 @Composable
@@ -43,5 +47,7 @@ fun AppNavGraph(navController: NavHostController) {
         tvDetailScreen(navController)
         tvShowSeeMoreScreen(navController)
         trailerScreen(navController)
+        personScreen(navController)
+        personDetailScreen(navController)
     }
 }
