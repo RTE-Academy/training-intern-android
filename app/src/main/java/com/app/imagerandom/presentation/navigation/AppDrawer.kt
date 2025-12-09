@@ -27,7 +27,7 @@ fun AppDrawer(
 ) {
     val drawerItems = listOf(
         DrawerItem(stringResource(R.string.movies), R.drawable.ic_movie, Screen.HOME),
-        DrawerItem(stringResource(R.string.tv_series), R.drawable.ic_tv, "${Screen.CATEGORIES}?categories=${35}"),
+        DrawerItem(stringResource(R.string.tv_series), R.drawable.ic_tv, Screen.TV_SHOW),
         DrawerItem(stringResource(R.string.actors), R.drawable.ic_person, Screen.PERSON)
     )
 
