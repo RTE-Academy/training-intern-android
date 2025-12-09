@@ -40,4 +40,9 @@
     <string name="actors" translatable="false">Diễn viên</string>
     <string name="sign_out" translatable="false">Đăng xuất</string>
     <string name="search" translatable="false">Tìm kiếm mọi thứ</string>
+    <string name="title_movie_now_playing" translatable="false">Phim lẻ đang chiếu</string>
+    <string name="title_movie_popular" translatable="false">Phim lẻ phổ biến</string>
+    <string name="title_movie_top_rated" translatable="false">Phim lẻ đánh giá cao</string>
+    <string name="title_movie_upcoming" translatable="false">Phim lẻ sắp chiếu</string>
+    <string name="empty_movie" translatable="false">Không có phim lẻ nào để hiển thị</string>
 </resources>

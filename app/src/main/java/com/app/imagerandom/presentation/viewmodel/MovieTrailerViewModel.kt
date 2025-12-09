@@ -3,7 +3,7 @@ package com.app.imagerandom.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.imagerandom.domain.model.Response
-import com.app.imagerandom.domain.usecase.movie_detail.GetTrailerOfMovieUseCase
+import com.app.imagerandom.domain.usecase.movie.GetTrailerOfMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

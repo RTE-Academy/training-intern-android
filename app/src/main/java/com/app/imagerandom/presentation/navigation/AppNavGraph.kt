@@ -12,6 +12,7 @@ import com.app.imagerandom.presentation.view.movie.movieDetailScreen
 import com.app.imagerandom.presentation.view.search.searchScreen
 import com.app.imagerandom.presentation.view.person.personScreen
 import com.app.imagerandom.presentation.view.person.personDetailScreen
+import com.app.imagerandom.presentation.view.movie.movieSeeMoreScreen
 
 object Screen {
     const val SIGN_IN = "sign_in"
@@ -19,6 +20,7 @@ object Screen {
     const val HOME = "home"
     const val MOVIE_DETAIL = "movie_detail"
     const val MOVIE_TRAILER = "movie_trailer"
+    const val MOVIE_SEE_MORE = "movie_see_more"
     const val CATEGORIES = "categories"
     const val SEARCH = "search"
     const val PERSON = "person"
@@ -35,6 +37,7 @@ fun AppNavGraph(navController: NavHostController) {
         signInScreen(navController)
         homeScreen(navController)
         movieDetailScreen(navController)
+        movieSeeMoreScreen(navController)
         categoriesScreen(navController)
         searchScreen(navController)
         trailerScreen(navController)

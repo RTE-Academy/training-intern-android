@@ -3,10 +3,8 @@ package com.app.imagerandom.presentation.view.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -17,17 +15,15 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -42,8 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -61,20 +55,20 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
 import com.app.imagerandom.domain.util.MediaType
+import com.app.imagerandom.domain.util.MovieType
 import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
 import com.app.imagerandom.presentation.view.auth.navigateToSignIn
 import com.app.imagerandom.presentation.view.categories.navigateToCategories
-import com.app.imagerandom.presentation.view.custom_view.MoviesItemCard
-import com.app.imagerandom.presentation.view.movie.navigateToMovieDetail
+import com.app.imagerandom.presentation.view.custom_view.MovieSection
 import com.app.imagerandom.presentation.view.search.navigateToSearch
 import com.app.imagerandom.presentation.viewmodel.HomeViewModel
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 fun NavController.navigateToHome(
@@ -93,16 +87,19 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
         route = Screen.HOME,
     ) {
         val viewModel = hiltViewModel<HomeViewModel>()
-        val recentMovieList by viewModel.movies.collectAsState()
+        val movieListPopular by viewModel.popular.collectAsState()
+        val movieListNowPlaying by viewModel.nowPlaying.collectAsState()
+        val movieListTopRated by viewModel.topRated.collectAsState()
+        val movieListUpcoming by viewModel.upcoming.collectAsState()
         val genresList by viewModel.genres.collectAsState()
-        val isLoading by viewModel::isLoading
         HomeScreen(
             navController = navController,
+            movieListPopular = movieListPopular,
+            movieListNowPlaying = movieListNowPlaying,
+            movieListTopRated = movieListTopRated,
+            movieListUpcoming = movieListUpcoming,
             isAutoSignIn = viewModel.checkAutoSignIn(),
-            isLoading = isLoading,
-            recentMovieList = recentMovieList,
-            genresList = genresList,
-            loadMoreMovies = viewModel::loadMovies,
+            genresList = genresList
         )
     }
 }
@@ -112,12 +109,13 @@ fun NavGraphBuilder.homeScreen(navController: NavController) {
 fun HomeScreen(
     navController: NavController,
     isAutoSignIn: Boolean,
-    isLoading: Boolean,
-    recentMovieList: List<MovieItem>,
     genresList: List<Genre>,
-    loadMoreMovies: () -> Unit,
+    movieListPopular: List<MovieItem>,
+    movieListNowPlaying: List<MovieItem>,
+    movieListTopRated: List<MovieItem>,
+    movieListUpcoming: List<MovieItem>
 ) {
-    val gridState = rememberLazyGridState()
+    val scrollState = rememberScrollState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
@@ -127,18 +125,6 @@ fun HomeScreen(
         if (!isAutoSignIn) {
             navController.navigateToSignIn("", "")
         }
-    }
-
-    // Observe grid scroll to load more movies
-    LaunchedEffect(gridState) {
-        snapshotFlow { gridState.firstVisibleItemIndex + gridState.layoutInfo.visibleItemsInfo.size }
-            .distinctUntilChanged()
-            .collect { lastVisible ->
-                val total = gridState.layoutInfo.totalItemsCount
-                if (lastVisible >= total - 12 && total > 0) {
-                    loadMoreMovies()
-                }
-            }
     }
 
     ModalNavigationDrawer(
@@ -322,59 +308,39 @@ fun HomeScreen(
                         }
                     }
 
-                    Text(
-                        text = stringResource(R.string.title_new_movie),
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            color = AppColors.TextPrimary
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(scrollState)
+                    ) {
+                        MovieSection(
+                            navController = navController,
+                            title = "Phim phổ biến",
+                            movies = movieListPopular,
+                            type = MovieType.POPULAR
                         )
-                    )
-
-                    if (isLoading) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(4.dp)
-                        ) {
-                            LinearProgressIndicator(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(4.dp),
-                                color = AppColors.TextPrimary,
-                                trackColor = AppColors.Error
-                            )
-                        }
-                    }
-
-                    if (recentMovieList.isNotEmpty()) {
-                        // List movies
-                        LazyVerticalGrid(
-                            state = gridState,
-                            columns = GridCells.Fixed(3),
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(5.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(recentMovieList.size) { index ->
-                                val movie = recentMovieList[index]
-                                MoviesItemCard(
-                                    movie = movie,
-                                    onClick = {
-                                        navController.navigateToMovieDetail(movie.id)
-                                    }
-                                )
-                            }
-                        }
-                    } else if (!isLoading) {
-                        // Empty state
-                        Text(
-                            text = stringResource(R.string.lable_empty_movie),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = AppColors.TextSecondary,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        Spacer(modifier = Modifier.height(24.dp))
+                        MovieSection(
+                            navController = navController,
+                            title = "Phim đang chiếu",
+                            movies = movieListNowPlaying,
+                            type = MovieType.NOW_PLAYING
                         )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        MovieSection(
+                            navController = navController,
+                            title = "Phim được đánh giá cao",
+                            movies = movieListTopRated,
+                            type = MovieType.TOP_RATED
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        MovieSection(
+                            navController = navController,
+                            title = "Phim sắp ra mắt",
+                            movies = movieListUpcoming,
+                            type = MovieType.UPCOMING
+                        )
+                        Spacer(modifier = Modifier.height(32.dp))
                     }
                 }
             }
@@ -385,13 +351,30 @@ fun HomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    val sampleMovies = remember { mutableStateListOf<MovieItem>() }
+    val mockMovie = MovieItem(
+        id = 1,
+        title = "Mock Movie",
+        overview = "This is a mock movie used for preview purposes.",
+        posterPath = "/path/to/poster.jpg",
+        backdropPath = "/path/to/backdrop.jpg",
+        releaseDate = "2024-01-01",
+        voteAverage = 8.5,
+        genreIds = listOf(28, 12),
+        adult = false,
+        originalLanguage = "",
+        originalTitle = "",
+        popularity = 2.0,
+        video = false,
+        voteCount = 1,
+    )
+    val mockMovies = List(10) { mockMovie }
     HomeScreen(
-        navController = NavController(LocalContext.current),
+        navController = rememberNavController(),
         isAutoSignIn = true,
-        isLoading = true,
-        recentMovieList = sampleMovies,
         genresList = emptyList(),
-        loadMoreMovies = { }
+        movieListPopular = mockMovies,
+        movieListNowPlaying = mockMovies,
+        movieListTopRated = mockMovies,
+        movieListUpcoming = mockMovies,
     )
 }
