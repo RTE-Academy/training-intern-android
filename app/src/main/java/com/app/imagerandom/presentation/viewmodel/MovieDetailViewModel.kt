@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.app.imagerandom.domain.model.MovieCreditsResponse
 import com.app.imagerandom.domain.model.MovieDetail
 import com.app.imagerandom.domain.model.Response
-import com.app.imagerandom.domain.usecase.movie_detail.GetCreditOfMovieUseCase
-import com.app.imagerandom.domain.usecase.movie_detail.GetMovieDetailUseCase
+import com.app.imagerandom.domain.usecase.movie.GetCreditOfMovieUseCase
+import com.app.imagerandom.domain.usecase.movie.GetMovieDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.app.imagerandom.domain.usecase.movie_detail
+package com.app.imagerandom.domain.usecase.movie
 
 import com.app.imagerandom.data.repository.movies.MoviesRepository
 import com.app.imagerandom.domain.model.MovieCreditsResponse
