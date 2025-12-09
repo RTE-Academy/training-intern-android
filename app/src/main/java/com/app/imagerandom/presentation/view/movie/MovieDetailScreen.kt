@@ -42,6 +42,7 @@ import com.app.imagerandom.domain.model.MovieDetail
 import com.app.imagerandom.domain.model.Response
 import com.app.imagerandom.presentation.navigation.Screen
 import com.app.imagerandom.presentation.ui.AppColors
+import com.app.imagerandom.presentation.view.custom_view.ErrorState
 import com.app.imagerandom.presentation.view.custom_view.MovieDetailContent
 import com.app.imagerandom.presentation.view.custom_view.MovieDetailShimmer
 import com.app.imagerandom.presentation.viewmodel.MovieDetailViewModel
@@ -123,40 +124,6 @@ fun MovieDetailScreen(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun ErrorState(message: String, onRetry: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AppColors.Primary),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = message,
-            color = AppColors.Error,
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = onRetry,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = AppColors.Accent,
-                contentColor = AppColors.TextPrimary
-            ),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(
-                text = "Thử lại",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
         }
     }
 }

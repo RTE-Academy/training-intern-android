@@ -16,6 +16,8 @@ import com.app.imagerandom.data.repository.movies.MoviesRepository
 import com.app.imagerandom.data.repository.movies.MoviesRepositoryImpl
 import com.app.imagerandom.data.repository.search.SearchRepository
 import com.app.imagerandom.data.repository.search.SearchRepositoryImpl
+import com.app.imagerandom.data.repository.tv_show.TvShowRepository
+import com.app.imagerandom.data.repository.tv_show.TvShowRepositoryImpl
 import com.app.imagerandom.data.repository.person.PersonRepository
 import com.app.imagerandom.data.repository.person.PersonRepositoryImpl
 import dagger.Module
@@ -73,6 +75,12 @@ object AppModule {
     @Singleton
     fun provideGenreRepository(dao: GenreDao, api: MovieApiService): GenreRepository {
         return GenreRepositoryImpl(dao = dao, apiService = api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTvShowRepository(api: MovieApiService): TvShowRepository {
+        return TvShowRepositoryImpl(apiService = api)
     }
 
     @Provides

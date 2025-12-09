@@ -11,6 +11,8 @@ import com.app.imagerandom.domain.model.SearchResponse
 import com.app.imagerandom.domain.model.PersonDetail
 import com.app.imagerandom.domain.model.PersonResponse
 import com.app.imagerandom.domain.model.RequestTokenResponse
+import com.app.imagerandom.domain.model.TVShowDetail
+import com.app.imagerandom.domain.model.TVShowResponse
 import com.app.imagerandom.domain.model.ValidateRequestTokenRequest
 import com.app.imagerandom.domain.model.ValidateRequestTokenResponse
 import retrofit2.http.Body
@@ -78,6 +80,41 @@ interface MovieApiService {
         @Path("movie_id") movieId: Int,
         @Query("language") language: String = "en-US"
     ): MovieVideosResponse
+
+    // Get TV shows airing today
+    @GET("tv/airing_today")
+    suspend fun getAiringTodayTVShows(
+        @Query("language") language: String = "vi-VN",
+        @Query("page") page: Int = 1
+    ): TVShowResponse
+
+    // Get TV shows on the air
+    @GET("tv/on_the_air")
+    suspend fun getOnTheAirTVShows(
+        @Query("language") language: String = "vi-VN",
+        @Query("page") page: Int = 1
+    ): TVShowResponse
+
+    // Get popular TV shows
+    @GET("tv/popular")
+    suspend fun getPopularTVShows(
+        @Query("language") language: String = "vi-VN",
+        @Query("page") page: Int = 1
+    ): TVShowResponse
+
+    // Get top rated TV shows
+    @GET("tv/top_rated")
+    suspend fun getTopRatedTVShows(
+        @Query("language") language: String = "vi-VN",
+        @Query("page") page: Int = 1
+    ): TVShowResponse
+
+    // Get TV shows detail
+    @GET("tv/{series_id}")
+    suspend fun getTVShowDetail(
+        @Path("series_id") seriesId: Int,
+        @Query("language") language: String = "vi-VN"
+    ): TVShowDetail
 
     // Search movie
     @GET("search/multi")

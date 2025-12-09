@@ -3,8 +3,31 @@
     <string name="app_name" translatable="false">Image Random</string>
     <string name="setting_title">Setting</string>
     <string name="home_screen_title" translatable="false">Phim hot nhất</string>
-    <string name="search_label" translatable="false">Tìm kiếm...</string>
+    <string name='tv_show_screen_title' translatable="false">Phim bộ</string>
     <string name="trailer_unavailable" translatable="false">Không có trailer</string>
+    <string name="see_more" translatable="false">Xem thêm</string>
+    <string name="error_unspecified_error" translatable="false">Lỗi không xác định</string>
+    <string name="no_data" translatable="false">Không có dữ liệu</string>
+    <string name="airing_today" translatable="false">Đang Phát Sóng Hôm Nay</string>
+    <string name="on_the_air" translatable="false">Đang Phát Sóng</string>
+    <string name="popular" translatable="false">Phổ Biến</string>
+    <string name="top_rated" translatable="false">Được Đánh Giá Cao</string>
+    <string name="retry" translatable="false">Thử lại</string>
+    <string name="episode" translatable="false">tập</string>
+    <string name="firt_air_day" translatable="false">Ngày phát sóng: %1$s</string>
+    <string name="number_of_seasons" translatable="false">Số mùa: %1$s</string>
+    <string name="number_of_episodes" translatable="false">Số tập: %1$s</string>
+    <string name="vote_average" translatable="false">Điểm: %1$s (%2$s lượt bình chọn)</string>
+    <string name="status" translatable="false">Trạng thái: %1$s</string>
+    <string name="genres" translatable="false">Thể loại: %1$s</string>
+    <string name="director" translatable="false">Đạo diễn</string>
+    <string name="seasons_list" translatable="false">Danh sách mùa</string>
+    <string name="title_airing_today" translatable="false">Phim Bộ Chiếu Hôm Nay</string>
+    <string name="title_on_the_air" translatable="false">Phim Bộ Đang Phát Sóng</string>
+    <string name="title_popular" translatable="false">Phim Bộ Phổ Biến</string>
+    <string name="title_top_rated" translatable="false">Phim Bộ Đánh Giá Cao</string>
+    <string name="empty_tv_show" translatable="false">Không có phim bộ nào để hiển thị</string>
+    <string name="search_label" translatable="false">Tìm kiếm...</string>
     <string name="title_war_movie" translatable="false">Phim Chiến Tranh</string>
     <string name="title_dramma_movie" translatable="false">Phim Chính Kịch</string>
     <string name="title_new_movie" translatable="false">Phim Mới Cập Nhật</string>
@@ -21,7 +44,6 @@
     <string name="error_sign_up_empty_username_or_password" translatable="false">Vui lòng nhập đầy đủ tên người dùng và mật khẩu</string>
     <string name="title_sign_up" translatable="false">Đăng Ký</string>
     <string name="lable_sign_in_in_sign_up" translatable="false">Đăng nhập ngay!</string>
-    <string name="error_unspecified_error" translatable="false">Lỗi không xác định</string>
     <string name="title_popular_actor" translatable="false">Diễn viên tiêu biểu</string>
     <string name="error_something_went_wrong" translatable="false">Đã xảy ra lỗi</string>
     <string name="unknown" translatable="false">Không rõ</string>
