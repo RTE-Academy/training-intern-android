@@ -9,16 +9,22 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.app.imagerandom.R
 import com.app.imagerandom.presentation.ui.AppColors
 
 @Composable
 fun SearchTabs(
     modifier: Modifier = Modifier,
     selectedTabIndex: Int,
-    onTabSelected: (index: Int) -> Unit
+    onTabSelected: (index: Int) -> Unit,
 ) {
-    val tabs = listOf("Phim lẻ", "Phim bộ", "Diễn viên")
+    val tabs = listOf(
+        stringResource(R.string.movies),
+        stringResource(R.string.tv_series),
+        stringResource(R.string.actors)
+    )
 
     TabRow(
         selectedTabIndex = selectedTabIndex,

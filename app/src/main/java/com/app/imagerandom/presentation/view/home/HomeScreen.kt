@@ -59,6 +59,7 @@ import androidx.navigation.compose.rememberNavController
 import com.app.imagerandom.R
 import com.app.imagerandom.domain.model.Genre
 import com.app.imagerandom.domain.model.MovieItem
+import com.app.imagerandom.domain.util.MediaType
 import com.app.imagerandom.domain.util.MovieType
 import com.app.imagerandom.presentation.navigation.AppDrawer
 import com.app.imagerandom.presentation.navigation.Screen
@@ -163,7 +164,7 @@ fun HomeScreen(
                         )
                     },
                     actions = {
-                        IconButton(onClick = { navController.navigateToSearch() }) {
+                        IconButton(onClick = { navController.navigateToSearch(MediaType.MOVIE) }) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_search),
                                 modifier = Modifier.size(25.dp),
@@ -243,7 +244,7 @@ fun HomeScreen(
                                         top.linkTo(background.top)
                                         end.linkTo(background.end)
                                     },
-                                text = genresList.getOrNull(17)?.name ?: "Phim Chiến Tranh",
+                                text = genresList.getOrNull(17)?.name ?: stringResource(R.string.title_war_movie),
                                 color = AppColors.TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp
@@ -299,7 +300,7 @@ fun HomeScreen(
                                         top.linkTo(background.top)
                                         start.linkTo(parent.start)
                                     },
-                                text = genresList.getOrNull(3)?.name ?: "Phim Hài",
+                                text = genresList.getOrNull(3)?.name ?: stringResource(R.string.title_dramma_movie),
                                 color = AppColors.TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp
